@@ -9,3 +9,7 @@ export interface Output {
     success: Boolean;
     error: String | undefined;
 }
+
+export interface Input {
+    okay: number
+}
