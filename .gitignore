@@ -15,4 +15,8 @@ bower_components
 # Ignore built ts files
 dist/**/*
 
+# Ignore the build
 build/
+
+# this is for us
+src/boss_path.ts

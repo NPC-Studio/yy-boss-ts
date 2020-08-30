@@ -1,12 +1,12 @@
 {
-    "name": "gm-code-vsc",
-    "version": "1.0.0",
-    "description": "",
+    "name": "yy-boss-ts",
+    "version": "0.1.0",
+    "description": "A shim to handle the YyBoss exe.",
     "main": "index.js",
     "scripts": {},
     "keywords": [],
-    "author": "",
-    "license": "ISC",
+    "author": "Jonathan Spira: jjspira@gmail.com",
+    "license": "MIT",
     "devDependencies": {
         "@types/node": "^14.0.27",
         "nodemon": "^2.0.4",
