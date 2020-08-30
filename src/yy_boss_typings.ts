@@ -1,7 +1,7 @@
 export enum OutputType {
-    Startup,
-    CommandOutput,
-    Shutdown,
+    Startup = 'Startup',
+    Command = 'Command',
+    Shutdown = 'Shutdown',
 }
 
 export interface Output {
