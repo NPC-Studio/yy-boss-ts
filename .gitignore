@@ -19,4 +19,4 @@ dist/**/*
 build/
 
 # this is for us
-src/boss_path.ts
+src/config.ts

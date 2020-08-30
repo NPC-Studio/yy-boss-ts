@@ -1,7 +1,4 @@
 import 'child_process';
-import { spawn } from 'child_process';
-import { YY_BOSS_PATH } from './boss_path';
-import { Output, OutputType, Input } from './yy_boss_typings';
 import { YyBoss } from './yy_boss';
 
 async function main() {

@@ -1,5 +1,5 @@
 import { spawn, ChildProcessWithoutNullStreams } from 'child_process';
-import { YY_BOSS_PATH } from './boss_path';
+import { YY_BOSS_PATH } from './config';
 import { Output, Input, OutputType } from './yy_boss_typings';
 import { assert } from 'console';
 
