@@ -1,6 +1,6 @@
 import { spawn, ChildProcessWithoutNullStreams } from 'child_process';
 import { YY_BOSS_PATH } from './config';
-import { Output, Input, OutputType } from './yy_boss_typings';
+import { Output, Command, OutputType } from './yy_boss_typings';
 import { assert } from 'console';
 
 export class YyBoss {
@@ -27,7 +27,7 @@ export class YyBoss {
         });
     }
 
-    writeCommand(command: Input): Promise<Output> {
+    writeCommand(command: Command): Promise<Output> {
         return new Promise((resolve, _) => {
             this.yyBossHandle.stdout.once('data', chonk => {
                 var output: Output = JSON.parse(chonk);
