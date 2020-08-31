@@ -10,13 +10,9 @@ This project, **YyBossTs**, provides an interface to abstract the exe into a sim
 async function main() {
     const yyp_boss = await create_yy_boss();
 
-    assert(yyp_boss.hasClosed == false, 'huh');
-
     await yyp_boss.writeCommand(new CreateFolderVfs('folders/Test.yy', 'Test2'));
     await yyp_boss.writeCommand(new SerializationCommand());
     await yyp_boss.shutdown();
-
-    assert(yyp_boss.hasClosed, 'should be closed..');
 }
 ```
 
