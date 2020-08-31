@@ -1,13 +1,20 @@
 import { spawn, ChildProcessWithoutNullStreams } from 'child_process';
 import { YY_BOSS_PATH } from './config';
-import { Output, Command, OutputType } from './yy_boss_typings';
+import { Command, ShutdownCommand } from './input';
+import { Output, OutputType } from './output';
 import { assert } from 'console';
 
 export class YyBoss {
     private yyBossHandle: ChildProcessWithoutNullStreams;
+    private closureStatus: Boolean;
 
     private constructor(yyBossHandle: ChildProcessWithoutNullStreams) {
         this.yyBossHandle = yyBossHandle;
+        this.closureStatus = false;
+
+        yyBossHandle.on('close', code => {
+            console.log(`Yy-Boss has shut down! Exited with ${code}`);
+        });
     }
 
     static create(yypPath: string, wd: string): Promise<[Output, YyBoss | undefined]> {
@@ -31,10 +38,31 @@ export class YyBoss {
         return new Promise((resolve, _) => {
             this.yyBossHandle.stdout.once('data', chonk => {
                 var output: Output = JSON.parse(chonk);
+
                 resolve(output);
             });
 
-            this.yyBossHandle.stdin.write(JSON.stringify(command));
+            let c = JSON.stringify(command) + '\n';
+            this.yyBossHandle.stdin.write(c);
         });
+    }
+
+    shutdown(): Promise<Output> {
+        return new Promise((resolve, _) => {
+            this.yyBossHandle.stdout.once('data', chonk => {
+                var output: Output = JSON.parse(chonk);
+                if (output.success) {
+                    this.closureStatus = true;
+                }
+
+                resolve(output);
+            });
+
+            this.yyBossHandle.stdin.write(JSON.stringify(new ShutdownCommand()) + '\n');
+        });
+    }
+
+    get hasClosed(): Boolean {
+        return this.closureStatus;
     }
 }
