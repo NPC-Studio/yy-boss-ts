@@ -42,8 +42,8 @@ export class YyBoss {
                 resolve(output);
             });
 
-            let c = JSON.stringify(command) + '\n';
-            this.yyBossHandle.stdin.write(c);
+            this.yyBossHandle.stdin.write(JSON.stringify(command));
+            this.yyBossHandle.stdin.write('\n');
         });
     }
 
@@ -58,7 +58,8 @@ export class YyBoss {
                 resolve(output);
             });
 
-            this.yyBossHandle.stdin.write(JSON.stringify(new ShutdownCommand()) + '\n');
+            this.yyBossHandle.stdin.write(JSON.stringify(new ShutdownCommand()));
+            this.yyBossHandle.stdin.write('\n');
         });
     }
 
