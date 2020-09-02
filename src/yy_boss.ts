@@ -1,8 +1,9 @@
 import { spawn, ChildProcessWithoutNullStreams } from 'child_process';
 import { YY_BOSS_PATH } from './config';
-import { Command, ShutdownCommand } from './input';
-import { Output, OutputType } from './output';
 import { assert } from 'console';
+import { Output, OutputType, Command } from './core';
+import { ShutdownCommand } from './shutdown';
+import { CommandToOutput } from './input_to_output';
 
 export class YyBoss {
     private yyBossHandle: ChildProcessWithoutNullStreams;
@@ -34,10 +35,10 @@ export class YyBoss {
         });
     }
 
-    writeCommand(command: Command): Promise<Output> {
+    writeCommand<T extends Command>(command: T): Promise<CommandToOutput<T>> {
         return new Promise((resolve, _) => {
             this.yyBossHandle.stdout.once('data', chonk => {
-                var output: Output = JSON.parse(chonk);
+                var output: CommandToOutput<T> = JSON.parse(chonk);
 
                 resolve(output);
             });

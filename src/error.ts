@@ -1,79 +1,12 @@
 import { exit } from 'process';
-import { SerializedData, ViewPath, Resource } from './input';
-
-export enum OutputType {
-    Startup = 'Startup',
-    Command = 'Command',
-    Shutdown = 'Shutdown',
-}
-
-export enum Item {
-    Folder = 'Folder',
-    Resource = 'Resource',
-}
-
-export abstract class Output {
-    protected abstract type: OutputType;
-    protected abstract success: Boolean;
-}
-
-export class StartupOutSuccess extends Output {
-    protected type: OutputType = OutputType.Startup;
-    protected success: Boolean = true;
-}
-
-export class StartupOutputError extends Output {
-    protected type: OutputType = OutputType.Startup;
-    protected success: Boolean = true;
-    startupError: String;
-
-    constructor(error: String) {
-        super();
-        this.startupError = error;
-    }
-}
-
-abstract class CommandOutput extends Output {
-    protected type: OutputType = OutputType.Command;
-    protected success: Boolean = true;
-}
-
-export class ResourceExistsOutput extends CommandOutput {
-    constructor(public exists: Boolean) {
-        super();
-    }
-}
-
-export class ResourceDataOutput extends CommandOutput {
-    constructor(public resource: SerializedData, public associatedData: SerializedData) {
-        super();
-    }
-}
-
-export class FolderGraphOutput extends CommandOutput {
-    folderGraph: never;
-
-    constructor(folderGraph: never) {
-        super();
-        this.folderGraph = folderGraph;
-    }
-}
-
-export class PathKindOutput extends CommandOutput {
-    constructor(public pathKind: Item) {
-        super();
-    }
-}
-
-export class CreatedFolderOutput extends CommandOutput {
-    constructor(public createdFolder: ViewPath) {
-        super();
-    }
-}
+import { CommandOutput, Resource } from './core';
 
 export class CommandOutputError extends CommandOutput {
-    protected success: Boolean = false;
     error: YypBossError;
+
+    get success(): Boolean {
+        return false;
+    }
 
     constructor(error: YypBossError) {
         super();
@@ -105,9 +38,7 @@ export class CouldNotReadCommand extends YypBossError {
 
 export class ResourceManipulation extends YypBossError {
     protected type: YypBossErrorType = YypBossErrorType.ResourceManipulation;
-    constructor(
-        public resourceManipulationError: resourceManipulationErrors.ResourceManipulationError
-    ) {
+    constructor(public resourceManipulationError: resourceManipulationErrors.ResourceManipulationError) {
         super();
     }
 }

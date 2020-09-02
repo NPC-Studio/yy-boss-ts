@@ -1,8 +1,9 @@
 import { YyBoss } from './yy_boss';
 import { YYP_PATH, WD_PATH } from './config';
-import { CreateFolderVfs, SerializationCommand, ShutdownCommand } from './input';
-import { assert } from 'console';
 import { exit } from 'process';
+import { CreateFolderVfs, CreatedFolderOutput } from './vfs';
+import { SerializationCommand } from './serialization';
+import { CommandOutputSuccessVoid } from './core';
 
 async function create_yy_boss(): Promise<YyBoss> {
     const [status, yy_boss] = await YyBoss.create(YYP_PATH, WD_PATH);
@@ -20,13 +21,10 @@ async function create_yy_boss(): Promise<YyBoss> {
 async function main() {
     const yyp_boss = await create_yy_boss();
 
-    assert(yyp_boss.hasClosed == false, 'huh');
+    let _: CreatedFolderOutput = await yyp_boss.writeCommand(new CreateFolderVfs('folders/Test.yy', 'Test2'));
+    let _sco: CommandOutputSuccessVoid = await yyp_boss.writeCommand(new SerializationCommand());
+    let _shutdown: CommandOutputSuccessVoid = await yyp_boss.shutdown();
 
-    await yyp_boss.writeCommand(new CreateFolderVfs('folders/Test.yy', 'Test2'));
-    await yyp_boss.writeCommand(new SerializationCommand());
-    await yyp_boss.shutdown();
-
-    assert(yyp_boss.hasClosed, 'should be closed..');
     console.log('Goodbye!');
 }
 
