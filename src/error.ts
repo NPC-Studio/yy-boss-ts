@@ -118,3 +118,7 @@ export module resourceManipulationErrors {
         protected type = ResourceManipulationErrorType.BadAdd;
     }
 }
+
+export module fodlerGraphErrors {
+    
+}

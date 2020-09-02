@@ -21,6 +21,11 @@ export interface ViewPath {
     path: String;
 }
 
+export interface FilesystemPath {
+    name: String;
+    path: String;
+}
+
 export enum Resource {
     Sprite = 'Sprite',
     Script = 'Script',

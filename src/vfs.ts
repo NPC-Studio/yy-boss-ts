@@ -1,4 +1,4 @@
-import { Command, CommandType, Resource, ViewPath, CommandOutput, Item } from './core';
+import { Command, CommandType, Resource, ViewPath, CommandOutput, Item, FilesystemPath } from './core';
 
 export enum VfsCommandType {
     MoveResource = 'MoveResource',
@@ -96,9 +96,9 @@ export class GetPathTypeVfs extends VfsCommand {
 }
 
 export class FolderGraphOutput extends CommandOutput {
-    folderGraph: never;
+    folderGraph: FolderGraph;
 
-    constructor(folderGraph: never) {
+    constructor(folderGraph: FolderGraph) {
         super();
         this.folderGraph = folderGraph;
     }
@@ -117,5 +117,10 @@ export class CreatedFolderOutput extends CommandOutput {
 }
 
 export interface FolderGraph {
-    
+    name: string;
+    pathToParent: string;
+    tags: string[];
+    order: number;
+    folders: FolderGraph[];
+    files: FilesystemPath[];
 }
