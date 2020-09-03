@@ -25,7 +25,6 @@
   "RoomOrder": [],
   "Folders": [
     {"folderPath":"folders/Test.yy","order":1,"resourceVersion":"1.0","name":"Test","tags":[],"resourceType":"GMFolder",},
-    {"folderPath":"folders/Test/Test2.yy","order":0,"resourceVersion":"1.0","name":"Test2","tags":[],"resourceType":"GMFolder",},
   ],
   "AudioGroups": [
     {"targets":461609314234257646,"resourceVersion":"1.0","name":"audiogroup_default","resourceType":"GMAudioGroup",},
