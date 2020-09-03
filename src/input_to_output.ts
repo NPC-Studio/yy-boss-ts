@@ -18,11 +18,13 @@ import {
     GetFullVfs,
     FolderGraphOutput,
     GetPathTypeVfs,
+    PathKindOutput,
 } from './vfs';
-import { CommandOutputSuccessVoid } from './core';
+import { CommandOutputSuccessVoid, Command } from './core';
+import { CreateCommand } from './create';
 
 // prettier-ignore
-export type CommandToOutput<T> = T extends
+export type CommandToOutput<T extends Command> = T extends
     // Returns for Nulls
     | SerializationCommand
     | ShutdownCommand
@@ -33,7 +35,7 @@ export type CommandToOutput<T> = T extends
     ? CommandOutputSuccessVoid
 
     // returns for getters
-    : T extends RemoveResource | GetResource
+    : T extends RemoveResource | GetResource | CreateCommand
     ? ResourceDataOutput
     
     // returns for boolean exists
@@ -50,7 +52,7 @@ export type CommandToOutput<T> = T extends
 
     // returns a pathkind
     : T extends GetPathTypeVfs
-    ? GetPathTypeVfs
+    ? PathKindOutput
 
     // should never be seen!
     : never;

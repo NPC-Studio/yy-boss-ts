@@ -1,6 +1,7 @@
 export enum CommandType {
     Resource = 'Resource',
     VirtualFileSystem = 'VirtualFileSystem',
+    Create = "Create",
     Serialize = 'Serialize',
     Shutdown = 'Shutdown',
 }
@@ -30,11 +31,6 @@ export enum Resource {
     Sprite = 'Sprite',
     Script = 'Script',
     Object = 'Object',
-}
-
-export interface NewResource {
-    new_resource: SerializedData;
-    associated_data: SerializedData;
 }
 
 export enum SerializedDataType {

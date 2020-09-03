@@ -1,9 +1,11 @@
 import { spawn, ChildProcessWithoutNullStreams } from 'child_process';
 import { YY_BOSS_PATH } from './config';
 import { assert } from 'console';
-import { Output, OutputType, Command } from './core';
+import { Output, OutputType, Command, CommandOutput } from './core';
 import { ShutdownCommand } from './shutdown';
 import { CommandToOutput } from './input_to_output';
+import { CommandOutputError } from './error';
+import { rejects } from 'assert';
 
 export class YyBoss {
     private yyBossHandle: ChildProcessWithoutNullStreams;
@@ -24,7 +26,7 @@ export class YyBoss {
         return new Promise((resolve, _) => {
             yyBossHandle.stdout.once('data', (chonk: string) => {
                 // if we boof the command somehow, JSON.parse will throw
-                var output: Output = JSON.parse(chonk);
+                let output: Output = JSON.parse(chonk);
                 assert(output.type === OutputType.Startup);
 
                 // output
@@ -35,12 +37,23 @@ export class YyBoss {
         });
     }
 
-    writeCommand<T extends Command>(command: T): Promise<CommandToOutput<T>> {
-        return new Promise((resolve, _) => {
+    writeCommand<T extends Command>(
+        command: T,
+        on_err?: (err: CommandOutputError) => void
+    ): Promise<CommandToOutput<T>> {
+        return new Promise((resolve, reject) => {
             this.yyBossHandle.stdout.once('data', chonk => {
-                var output: CommandToOutput<T> = JSON.parse(chonk);
-
-                resolve(output);
+                let cmd: CommandOutput = JSON.parse(chonk);
+                if (cmd.success == false) {
+                    if (on_err !== undefined) {
+                        on_err(cmd as CommandOutputError);
+                        resolve();
+                    } else {
+                        reject('no error handler was given, but an error occured');
+                    }
+                } else {
+                    resolve(cmd as CommandToOutput<T>);
+                }
             });
 
             this.yyBossHandle.stdin.write(JSON.stringify(command));

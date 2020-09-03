@@ -1,4 +1,3 @@
-import { exit } from 'process';
 import { CommandOutput, Resource } from './core';
 
 export class CommandOutputError extends CommandOutput {
@@ -38,15 +37,14 @@ export class CouldNotReadCommand extends YypBossError {
 
 export class ResourceManipulation extends YypBossError {
     protected type: YypBossErrorType = YypBossErrorType.ResourceManipulation;
-    constructor(public resourceManipulationError: resourceManipulationErrors.ResourceManipulationError) {
+    constructor(public data: String) {
         super();
     }
 }
 
-export class FolderGraphError extends YypBossError {
-    protected type: YypBossErrorType = YypBossErrorType.ResourceManipulation;
-    constructor(folderGraphError: never) {
-        // A WHOLE THING
+abstract class FolderGraphError extends YypBossError {
+    protected type: YypBossErrorType = YypBossErrorType.FolderGraphError;
+    constructor(public data: String) {
         super();
     }
 }
@@ -84,41 +82,4 @@ export class InternalError extends YypBossError {
     constructor(public fatal: Boolean) {
         super();
     }
-}
-
-export module resourceManipulationErrors {
-    export enum ResourceManipulationErrorType {
-        FolderGraphError = 'FolderGraphError',
-        BadAdd = 'BadAdd',
-        BadGet = 'BadGet',
-        InternalError = 'InternalError',
-    }
-
-    export abstract class ResourceManipulationError {
-        protected abstract type: ResourceManipulationErrorType;
-    }
-
-    export class FolderGraph extends ResourceManipulationError {
-        protected type = ResourceManipulationErrorType.FolderGraphError;
-        // other stuff!
-    }
-
-    export class BadAdd extends ResourceManipulationError {
-        protected type = ResourceManipulationErrorType.BadAdd;
-        constructor(public existingResource: Resource) {
-            super();
-        }
-    }
-
-    export class BadGet extends ResourceManipulationError {
-        protected type = ResourceManipulationErrorType.BadGet;
-    }
-
-    export class InternalError extends ResourceManipulationError {
-        protected type = ResourceManipulationErrorType.BadAdd;
-    }
-}
-
-export module fodlerGraphErrors {
-    
 }

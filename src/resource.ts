@@ -3,9 +3,9 @@ import {
     CommandType,
     ResourceCommandType,
     Resource,
-    NewResource,
     CommandOutput,
     SerializedData,
+    SerializedDataType,
 } from './core';
 
 abstract class ResourceCommand extends Command {
@@ -21,12 +21,14 @@ abstract class ResourceCommand extends Command {
 
 export class AddResource extends ResourceCommand {
     protected subCommand: ResourceCommandType = ResourceCommandType.Add;
-    private newResource: NewResource;
+    private newResource: SerializedData;
+    private associatedData: SerializedData;
 
-    constructor(resource: Resource, newResource: NewResource) {
+    constructor(resource: Resource, newResource: SerializedData, associatedData: SerializedData) {
         super(resource);
 
         this.newResource = newResource;
+        this.associatedData = associatedData;
     }
 }
 
