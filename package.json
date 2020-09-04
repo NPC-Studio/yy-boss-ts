@@ -3,7 +3,9 @@
     "version": "0.1.0",
     "description": "A shim to handle the YyBoss exe.",
     "main": "index.js",
-    "scripts": {},
+    "scripts": {
+        "prepublish": "tsc"
+    },
     "keywords": [],
     "author": "Jonathan Spira: jjspira@gmail.com",
     "license": "MIT",

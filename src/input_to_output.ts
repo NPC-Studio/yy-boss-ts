@@ -26,7 +26,7 @@ import { CreateCommand } from './create';
 // prettier-ignore
 export type CommandToOutput<T extends Command> = T extends
     // Returns for Nulls
-    | SerializationCommand
+    SerializationCommand
     | ShutdownCommand
     | AddResource
     | MoveResourceVfs
