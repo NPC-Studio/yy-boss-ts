@@ -62,14 +62,16 @@ export class ExistsResource extends ResourceCommand {
     }
 }
 
-export class ResourceExistsOutput extends CommandOutput {
-    constructor(public exists: Boolean) {
-        super();
+export module outputs {
+    export class ResourceExistsOutput extends CommandOutput {
+        constructor(public exists: Boolean) {
+            super();
+        }
     }
-}
 
-export class ResourceDataOutput extends CommandOutput {
-    constructor(public resource: SerializedData, public associatedData: SerializedData) {
-        super();
+    export class ResourceDataOutput extends CommandOutput {
+        constructor(public resource: SerializedData, public associatedData: SerializedData) {
+            super();
+        }
     }
 }

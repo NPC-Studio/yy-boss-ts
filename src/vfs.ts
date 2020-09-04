@@ -95,32 +95,34 @@ export class GetPathTypeVfs extends VfsCommand {
     }
 }
 
-export class FolderGraphOutput extends CommandOutput {
-    folderGraph: FolderGraph;
+export module outputs {
+    export class FolderGraphOutput extends CommandOutput {
+        folderGraph: FolderGraph;
 
-    constructor(folderGraph: FolderGraph) {
-        super();
-        this.folderGraph = folderGraph;
+        constructor(folderGraph: FolderGraph) {
+            super();
+            this.folderGraph = folderGraph;
+        }
     }
-}
 
-export class PathKindOutput extends CommandOutput {
-    constructor(public pathKind: Item) {
-        super();
+    export class PathKindOutput extends CommandOutput {
+        constructor(public pathKind: Item) {
+            super();
+        }
     }
-}
 
-export class CreatedFolderOutput extends CommandOutput {
-    constructor(public createdFolder: ViewPath) {
-        super();
+    export class CreatedFolderOutput extends CommandOutput {
+        constructor(public createdFolder: ViewPath) {
+            super();
+        }
     }
-}
 
-export interface FolderGraph {
-    name: string;
-    pathToParent: string;
-    tags: string[];
-    order: number;
-    folders: FolderGraph[];
-    files: FilesystemPath[];
+    export interface FolderGraph {
+        name: string;
+        pathToParent: string;
+        tags: string[];
+        order: number;
+        folders: FolderGraph[];
+        files: FilesystemPath[];
+    }
 }

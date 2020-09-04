@@ -4,21 +4,18 @@ import {
     AddResource,
     RemoveResource,
     GetResource,
-    ResourceDataOutput,
     ExistsResource,
-    ResourceExistsOutput,
+    outputs as resourceOutputs,
 } from './resource';
 import {
     MoveResourceVfs,
     MoveFolderVfs,
     RemoveFolderVfs,
     CreateFolderVfs,
-    CreatedFolderOutput,
     GetFolderVfs,
     GetFullVfs,
-    FolderGraphOutput,
     GetPathTypeVfs,
-    PathKindOutput,
+    outputs as vfsOutputs,
 } from './vfs';
 import { CommandOutputSuccessVoid, Command } from './core';
 import { CreateCommand } from './create';
@@ -36,23 +33,23 @@ export type CommandToOutput<T extends Command> = T extends
 
     // returns for getters
     : T extends RemoveResource | GetResource | CreateCommand
-    ? ResourceDataOutput
+    ? resourceOutputs.ResourceDataOutput
     
     // returns for boolean exists
     : T extends ExistsResource
-    ? ResourceExistsOutput
+    ? resourceOutputs.ResourceExistsOutput
     
     // returns a path
     : T extends CreateFolderVfs
-    ? CreatedFolderOutput
+    ? vfsOutputs.CreatedFolderOutput
     
     // returns a folder graph
     : T extends GetFolderVfs | GetFullVfs
-    ? FolderGraphOutput
+    ? vfsOutputs.FolderGraphOutput
 
     // returns a pathkind
     : T extends GetPathTypeVfs
-    ? PathKindOutput
+    ? vfsOutputs.PathKindOutput
 
     // should never be seen!
     : never;
