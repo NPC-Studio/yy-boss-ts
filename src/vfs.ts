@@ -117,12 +117,25 @@ export module outputs {
         }
     }
 
-    export interface FolderGraph {
-        name: string;
-        pathToParent: string;
-        tags: string[];
-        order: number;
-        folders: FolderGraph[];
-        files: FilesystemPath[];
+    export class FolderGraph {
+        constructor(
+            public readonly name: string,
+            public readonly pathToParent: string,
+            public readonly tags: string[],
+            public order: number,
+            public folders: FolderGraph[],
+            public files: FilesystemPath[]
+        ) {}
+
+        public viewPathLocation(): String {
+            let path_name = undefined;
+            if (this.pathToParent.endsWith('.yy')) {
+                path_name = this.pathToParent.slice(0, -3);
+            } else {
+                path_name = this.pathToParent.slice();
+            }
+            
+            return `${path_name}/${this.name}.yy`;
+        }
     }
 }
