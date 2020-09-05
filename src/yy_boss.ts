@@ -5,6 +5,7 @@ import { ShutdownCommand } from './shutdown';
 import { CommandToOutput } from './input_to_output';
 import { CommandOutputError } from './error';
 import * as path from 'path';
+import { stdout } from 'process';
 
 export class YyBoss {
     private yyBossHandle: ChildProcessWithoutNullStreams;
@@ -22,13 +23,16 @@ export class YyBoss {
         yyBossHandle.on('close', code => {
             console.log(`Yy-Boss has shut down! Exited with ${code}`);
         });
+        yyBossHandle.stderr.pipe(stdout);
     }
 
     writeCommand<T extends Command>(command: T): Promise<CommandToOutput<T>> {
         return new Promise((resolve, _) => {
-            this.yyBossHandle.stdout.once('data', chonk => {
+            this.yyBossHandle.stdout.once('data', (chonk: string) => {
+                console.log(chonk.toString());
                 let cmd: CommandOutput = JSON.parse(chonk);
-                if (cmd.success == false) {
+
+                if (cmd.success === false) {
                     this.error = cmd as CommandOutputError;
                     resolve();
                 } else {
@@ -36,8 +40,9 @@ export class YyBoss {
                 }
             });
 
-            this.yyBossHandle.stdin.write(JSON.stringify(command));
-            this.yyBossHandle.stdin.write('\n');
+            let gonna_write = JSON.stringify(command) + '\n';
+            this.yyBossHandle.stdin.write(gonna_write);
+            console.log(`command written, ${gonna_write}`);
         });
     }
 

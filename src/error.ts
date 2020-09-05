@@ -30,49 +30,49 @@ export abstract class YypBossError {
 
 export class CouldNotReadCommand extends YypBossError {
     protected type: YypBossErrorType = YypBossErrorType.CouldNotReadCommand;
-    constructor(public data: String) {
+    constructor(public data: string) {
         super();
     }
 }
 
 export class ResourceManipulation extends YypBossError {
     protected type: YypBossErrorType = YypBossErrorType.ResourceManipulation;
-    constructor(public data: String) {
+    constructor(public data: string) {
         super();
     }
 }
 
 abstract class FolderGraphError extends YypBossError {
     protected type: YypBossErrorType = YypBossErrorType.FolderGraphError;
-    constructor(public data: String) {
+    constructor(public data: string) {
         super();
     }
 }
 
 export class YyParseError extends YypBossError {
     protected type: YypBossErrorType = YypBossErrorType.YyParseError;
-    constructor(public data: String) {
+    constructor(public data: string) {
         super();
     }
 }
 
 export class AssociatedDataParseError extends YypBossError {
     protected type: YypBossErrorType = YypBossErrorType.AssociatedDataParseError;
-    constructor(public data: String) {
+    constructor(public data: string) {
         super();
     }
 }
 
 export class CouldNotOutputData extends YypBossError {
     protected type: YypBossErrorType = YypBossErrorType.CouldNotOutputData;
-    constructor(public data: String) {
+    constructor(public data: string) {
         super();
     }
 }
 
 export class CouldNotSerializeYypBoss extends YypBossError {
     protected type: YypBossErrorType = YypBossErrorType.CouldNotSerializeYypBoss;
-    constructor(public data: String) {
+    constructor(public data: string) {
         super();
     }
 }

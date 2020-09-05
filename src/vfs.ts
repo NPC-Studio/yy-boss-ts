@@ -18,11 +18,11 @@ abstract class VfsCommand extends Command {
 export class MoveResourceVfs extends VfsCommand {
     protected subCommand: VfsCommandType = VfsCommandType.MoveResource;
 
-    private resourceToMove: String;
+    private resourceToMove: string;
     private resource: Resource;
     private newParent: ViewPath;
 
-    constructor(resourceToMove: String, resource: Resource, newParent: ViewPath) {
+    constructor(resourceToMove: string, resource: Resource, newParent: ViewPath) {
         super();
         this.resourceToMove = resourceToMove;
         this.resource = resource;
@@ -33,10 +33,10 @@ export class MoveResourceVfs extends VfsCommand {
 export class MoveFolderVfs extends VfsCommand {
     protected subCommand: VfsCommandType = VfsCommandType.MoveFolder;
 
-    private folder: String;
+    private folder: string;
     private newParent: ViewPath;
 
-    constructor(folder: String, newParent: ViewPath) {
+    constructor(folder: string, newParent: ViewPath) {
         super();
         this.folder = folder;
         this.newParent = newParent;
@@ -46,10 +46,10 @@ export class MoveFolderVfs extends VfsCommand {
 export class CreateFolderVfs extends VfsCommand {
     protected subCommand: VfsCommandType = VfsCommandType.CreateFolder;
 
-    private parentFolder: String;
-    private folderName: String;
+    private parentFolder: string;
+    private folderName: string;
 
-    constructor(parentFolder: String, folderName: String) {
+    constructor(parentFolder: string, folderName: string) {
         super();
         this.parentFolder = parentFolder;
         this.folderName = folderName;
@@ -59,10 +59,10 @@ export class CreateFolderVfs extends VfsCommand {
 export class RemoveFolderVfs extends VfsCommand {
     protected subCommand: VfsCommandType = VfsCommandType.RemoveFolder;
 
-    private folder: String;
+    private folder: string;
     private recursive: Boolean;
 
-    constructor(folder: String, recursive: Boolean) {
+    constructor(folder: string, recursive: Boolean) {
         super();
         this.folder = folder;
         this.recursive = recursive;
@@ -72,9 +72,9 @@ export class RemoveFolderVfs extends VfsCommand {
 export class GetFolderVfs extends VfsCommand {
     protected subCommand: VfsCommandType = VfsCommandType.GetFolder;
 
-    private folder: String;
+    private folder: string;
 
-    constructor(folder: String) {
+    constructor(folder: string) {
         super();
         this.folder = folder;
     }
@@ -127,7 +127,7 @@ export module outputs {
             public files: FilesystemPath[]
         ) {}
 
-        public viewPathLocation(): String {
+        public viewPathLocation(): string {
             let path_name = undefined;
             if (this.pathToParent.endsWith('.yy')) {
                 path_name = this.pathToParent.slice(0, -3);

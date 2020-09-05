@@ -18,13 +18,13 @@ export abstract class Command {
 }
 
 export interface ViewPath {
-    name: String;
-    path: String;
+    name: string;
+    path: string;
 }
 
 export interface FilesystemPath {
-    name: String;
-    path: String;
+    name: string;
+    path: string;
 }
 
 export enum Resource {
@@ -45,9 +45,9 @@ export abstract class SerializedData {
 
 export class SerializedDataValue extends SerializedData {
     protected dataType: SerializedDataType = SerializedDataType.Value;
-    protected data: String;
+    protected data: string;
 
-    constructor(data: String) {
+    constructor(data: string) {
         super();
         this.data = data;
     }
@@ -55,9 +55,9 @@ export class SerializedDataValue extends SerializedData {
 
 export class SerializedDataFilepath extends SerializedData {
     protected dataType: SerializedDataType = SerializedDataType.Filepath;
-    protected data: String;
+    protected data: string;
 
-    constructor(filepath: String) {
+    constructor(filepath: string) {
         super();
         this.data = filepath;
     }

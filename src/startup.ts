@@ -13,13 +13,13 @@ export class StartupOutputError extends Output {
     get type(): OutputType {
         return OutputType.Startup;
     }
-    startupError: String;
+    startupError: string;
 
     get success(): Boolean {
         return false;
     }
 
-    constructor(error: String) {
+    constructor(error: string) {
         super();
         this.startupError = error;
     }

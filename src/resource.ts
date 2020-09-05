@@ -34,9 +34,9 @@ export class AddResource extends ResourceCommand {
 
 export class RemoveResource extends ResourceCommand {
     protected subCommand: ResourceCommandType = ResourceCommandType.Remove;
-    protected identifier: String;
+    protected identifier: string;
 
-    constructor(resource: Resource, identifier: String) {
+    constructor(resource: Resource, identifier: string) {
         super(resource);
         this.identifier = identifier;
     }
@@ -44,9 +44,9 @@ export class RemoveResource extends ResourceCommand {
 
 export class GetResource extends ResourceCommand {
     protected subCommand: ResourceCommandType = ResourceCommandType.Get;
-    protected identifier: String;
+    protected identifier: string;
 
-    constructor(resource: Resource, identifier: String) {
+    constructor(resource: Resource, identifier: string) {
         super(resource);
         this.identifier = identifier;
     }
@@ -54,9 +54,9 @@ export class GetResource extends ResourceCommand {
 
 export class ExistsResource extends ResourceCommand {
     protected subCommand: ResourceCommandType = ResourceCommandType.Exists;
-    protected identifier: String;
+    protected identifier: string;
 
-    constructor(resource: Resource, identifier: String) {
+    constructor(resource: Resource, identifier: string) {
         super(resource);
         this.identifier = identifier;
     }
