@@ -12,6 +12,10 @@ export class YyBoss {
     private closureStatus: Boolean;
     error: CommandOutputError | undefined;
 
+    get hasError(): Boolean {
+        return this.error !== undefined;
+    }
+
     get hasClosed(): Boolean {
         return this.closureStatus;
     }
@@ -29,7 +33,6 @@ export class YyBoss {
     writeCommand<T extends Command>(command: T): Promise<CommandToOutput<T>> {
         return new Promise((resolve, _) => {
             this.yyBossHandle.stdout.once('data', (chonk: string) => {
-                console.log(chonk.toString());
                 let cmd: CommandOutput = JSON.parse(chonk);
 
                 if (cmd.success === false) {
@@ -42,7 +45,7 @@ export class YyBoss {
 
             let gonna_write = JSON.stringify(command) + '\n';
             this.yyBossHandle.stdin.write(gonna_write);
-            console.log(`command written, ${gonna_write}`);
+            this.error = undefined;
         });
     }
 
@@ -57,8 +60,7 @@ export class YyBoss {
                 resolve(output);
             });
 
-            this.yyBossHandle.stdin.write(JSON.stringify(new ShutdownCommand()));
-            this.yyBossHandle.stdin.write('\n');
+            this.yyBossHandle.stdin.write(JSON.stringify(new ShutdownCommand()) + '\n');
         });
     }
 

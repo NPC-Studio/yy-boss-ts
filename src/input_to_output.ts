@@ -6,6 +6,7 @@ import {
     GetResource,
     ExistsResource,
     outputs as resourceOutputs,
+    GetAssociatedDataResource,
 } from './resource';
 import {
     MoveResourceVfs,
@@ -31,9 +32,16 @@ export type CommandToOutput<T extends Command> = T extends
     | RemoveFolderVfs
     ? CommandOutputSuccessVoid
 
-    // returns for getters
-    : T extends RemoveResource | GetResource | CreateCommand
+    // full returns
+    : T extends RemoveResource | CreateCommand
+    ? resourceOutputs.ResourceFullDataOutput
+    
+    : T extends GetResource
     ? resourceOutputs.ResourceDataOutput
+    
+    : T extends GetAssociatedDataResource
+    ? resourceOutputs.ResourceAssociatedDataOutput
+
     
     // returns for boolean exists
     : T extends ExistsResource

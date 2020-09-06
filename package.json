@@ -2,14 +2,14 @@
     "name": "yy-boss-ts",
     "version": "0.1.0",
     "description": "A shim to handle the YyBoss exe.",
-    "main": "./build/index.js",
-    "types": "./build/index.d.ts",
+    "main": "./out/index.js",
+    "types": "./out/index.d.ts",
     "repository": {
         "type": "git",
         "directory": "https://github.com/NPC-Studio/yy-boss-ts"
     },
     "files": [
-        "/build"
+        "/out"
     ],
     "scripts": {
         "prepare": "tsc"

@@ -13,10 +13,7 @@ bower_components
 .DS_Store
 
 # Ignore built ts files
-dist/**/*
-
-# Ignore the build
-build/
+out/**/*
 
 # this is for us
 src/config.ts

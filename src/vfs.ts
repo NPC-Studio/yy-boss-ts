@@ -97,11 +97,11 @@ export class GetPathTypeVfs extends VfsCommand {
 
 export module outputs {
     export class FolderGraphOutput extends CommandOutput {
-        folderGraph: FolderGraph;
+        flatFolderGraph: FlatFolderGraph;
 
-        constructor(folderGraph: FolderGraph) {
+        constructor(folderGraph: FlatFolderGraph) {
             super();
-            this.folderGraph = folderGraph;
+            this.flatFolderGraph = folderGraph;
         }
     }
 
@@ -117,25 +117,22 @@ export module outputs {
         }
     }
 
-    export class FolderGraph {
-        constructor(
-            public readonly name: string,
-            public readonly pathToParent: string,
-            public readonly tags: string[],
-            public order: number,
-            public folders: FolderGraph[],
-            public files: FilesystemPath[]
-        ) {}
+    export interface FlatFolderGraph {
+        readonly viewPath: ViewPath;
+        readonly pathToParent: ViewPath | undefined;
+        folders: ViewPath[];
+        files: FlatResourceDescriptor[];
+    }
 
-        public viewPathLocation(): string {
-            let path_name = undefined;
-            if (this.pathToParent.endsWith('.yy')) {
-                path_name = this.pathToParent.slice(0, -3);
-            } else {
-                path_name = this.pathToParent.slice();
-            }
-            
-            return `${path_name}/${this.name}.yy`;
-        }
+    export interface FlatResourceDescriptor {
+        filesystemPath: FilesystemPath;
+        resourceDescriptor: ResourceDescriptor;
+    }
+
+    export interface ResourceDescriptor {
+        resource: Resource;
+        /** We don't use this at all right now. */
+        order: number;
+        parentLocation: string;
     }
 }

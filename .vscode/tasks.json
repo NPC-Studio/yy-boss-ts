@@ -4,14 +4,14 @@
         {
             "type": "shell",
             "windows": {
-                "command": ".\\.vscode\\tasks\\run.ps1"
+                "command": ".\\.vscode\\tasks\\build.ps1"
             },
             "osx": {
-                "command": "./.vscode/tasks/run.sh"
+                "command": "./.vscode/tasks/build.sh"
             },
             "command": "echo 'are you on linux, wtf man'",
             "problemMatcher": ["$rustc"],
-            "label": "rust: cargo run",
+            "label": "build",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -24,6 +24,15 @@
                 "showReuseMessage": true,
                 "clear": true
             }
+        },
+        {
+            "type": "typescript",
+            "tsconfig": "tsconfig.json",
+            "option": "watch",
+            "problemMatcher": ["$tsc-watch"],
+            "group": "build",
+            "label": "tsc: watch - tsconfig.json",
+            "runOptions": { "runOn": "folderOpen" }
         }
     ]
 }

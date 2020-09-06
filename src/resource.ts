@@ -52,6 +52,14 @@ export class GetResource extends ResourceCommand {
     }
 }
 
+export class GetAssociatedDataResource extends ResourceCommand {
+    protected subCommand: ResourceCommandType = ResourceCommandType.GetAssociatedData;
+
+    constructor(resource: Resource, protected identifier: string, protected force: boolean) {
+        super(resource);
+    }
+}
+
 export class ExistsResource extends ResourceCommand {
     protected subCommand: ResourceCommandType = ResourceCommandType.Exists;
     protected identifier: string;
@@ -69,8 +77,20 @@ export module outputs {
         }
     }
 
-    export class ResourceDataOutput extends CommandOutput {
+    export class ResourceFullDataOutput extends CommandOutput {
         constructor(public resource: SerializedData, public associatedData: SerializedData) {
+            super();
+        }
+    }
+
+    export class ResourceDataOutput extends CommandOutput {
+        constructor(public resource: SerializedData) {
+            super();
+        }
+    }
+
+    export class ResourceAssociatedDataOutput extends CommandOutput {
+        constructor(public associatedData: SerializedData) {
             super();
         }
     }
