@@ -161,6 +161,9 @@ export class YyBoss {
         bossDirectory = path.resolve(bossDirectory);
         force = force === undefined ? false : force;
 
+        // make sure the directory is valid, so we can write and read below
+        await fs.ensureDir(bossDirectory);
+
         let bosspath = undefined;
         let update = false;
 
@@ -205,11 +208,15 @@ export class YyBoss {
             try {
                 await download(bossurl, output_zip);
             } catch (e) {
-                throw 'Update from GitHub releases failed!';
+                throw `Update from GitHub releases failed! -- ${e}`;
             }
 
             await extract(output_zip, { dir: bossDirectory });
             await fs.remove(output_zip);
+
+            // only unix will need the chmod but windows can have some chmod
+            // as a treat
+            await fs.chmod(bosspath, 0o777);
 
             console.log('Updated succesfully');
         }
