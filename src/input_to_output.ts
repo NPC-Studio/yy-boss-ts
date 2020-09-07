@@ -19,7 +19,7 @@ import {
     outputs as vfsOutputs,
 } from './vfs';
 import { CommandOutputSuccessVoid, Command } from './core';
-import { CreateCommand } from './create';
+import { CreateCommand, PrettyEventNames, outputs as utilOutputs } from './utilities';
 
 // prettier-ignore
 export type CommandToOutput<T extends Command> = T extends
@@ -33,10 +33,14 @@ export type CommandToOutput<T extends Command> = T extends
     ? CommandOutputSuccessVoid
 
     // full returns
-    : T extends RemoveResource | CreateCommand
+    : T extends RemoveResource
     ? resourceOutputs.ResourceFullDataOutput
     
-    : T extends GetResource
+    // pretty
+    : T extends PrettyEventNames
+    ? utilOutputs.PrettyEventOutput
+    
+    : T extends GetResource | CreateCommand
     ? resourceOutputs.ResourceDataOutput
     
     : T extends GetAssociatedDataResource

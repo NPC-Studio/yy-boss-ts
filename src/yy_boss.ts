@@ -8,7 +8,7 @@ import * as path from 'path';
 import { stdout } from 'process';
 import { StartupOutputError } from './startup';
 
-const CURRENT_VERSION = 'yy-boss 0.4.4';
+const CURRENT_VERSION = 'yy-boss 0.4.5';
 
 abstract class Logging {
     abstract logLevel: Log;

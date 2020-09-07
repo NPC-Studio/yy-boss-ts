@@ -1,12 +1,12 @@
-import {
-    Command,
-    CommandType,
-    ResourceCommandType,
-    Resource,
-    CommandOutput,
-    SerializedData,
-    SerializedDataType,
-} from './core';
+import { Command, CommandType, Resource, CommandOutput, SerializedData, SerializedDataType } from './core';
+
+export enum ResourceCommandType {
+    Add = 'Add',
+    Remove = 'Remove',
+    Get = 'Get',
+    GetAssociatedData = 'GetAssociatedData',
+    Exists = 'Exists',
+}
 
 abstract class ResourceCommand extends Command {
     protected type: CommandType = CommandType.Resource;

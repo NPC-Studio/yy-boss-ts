@@ -1,17 +1,9 @@
 export enum CommandType {
     Resource = 'Resource',
     VirtualFileSystem = 'VirtualFileSystem',
-    Create = 'Create',
+    Utilities = 'Utilities',
     Serialize = 'Serialize',
     Shutdown = 'Shutdown',
-}
-
-export enum ResourceCommandType {
-    Add = 'Add',
-    Remove = 'Remove',
-    Get = 'Get',
-    GetAssociatedData = 'GetAssociatedData',
-    Exists = 'Exists',
 }
 
 export abstract class Command {
