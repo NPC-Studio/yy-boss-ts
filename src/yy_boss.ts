@@ -145,7 +145,7 @@ export class YyBoss {
         });
     }
 
-    static async fetchYyBoss(bossDirectory: string, force: Boolean): Promise<String> {
+    static async fetchYyBoss(bossDirectory: string, force: Boolean): Promise<string> {
         // Fetches a compatible release of YYBoss from Github
         async function download(url: string, dest: string): Promise<void> {
             const response = await axios.get(url, { responseType: 'stream' });
@@ -157,17 +157,22 @@ export class YyBoss {
             });
         }
 
-        let bosspath = bossDirectory;
+        // resolve it to the full path...not really necessary, but good for debugging
+        bossDirectory = path.resolve(bossDirectory);
+
+        let bosspath = undefined;
         let update = false;
 
         let bossurl = `https://github.com/NPC-Studio/yy-boss/releases/download/v${CURRENT_VERSION}/YyBoss`;
 
         if (process.platform == 'win32') {
-            bosspath = './yy-boss-cli.exe';
+            bosspath = path.join(bossDirectory, 'yy-boss-cli.exe');
             bossurl = `${bossurl}.zip`;
         } else if (process.platform == 'darwin') {
-            bosspath = './yy-boss-cli_darwin';
-            bossurl = `${bossurl}.Darwin.zip`;
+            bosspath = path.join(bossDirectory, 'yy-boss-cli_darwin');
+            bossurl = `${bossurl}-Darwin.zip`;
+        } else {
+            throw 'Fetch does not have support for Linux!';
         }
 
         if (!fs.existsSync(bosspath)) {
@@ -193,19 +198,19 @@ export class YyBoss {
 
         if (update) {
             // file either doesn't exist, or we have the wrong version
+            const output_zip = path.join(bossDirectory, 'yy-boss-cli.zip');
             console.log(`Updating from ${bossurl}`);
+
             try {
-                await download(bossurl, './yy-boss-cli.zip');
+                await download(bossurl, output_zip);
             } catch (e) {
                 throw 'Update from GitHub releases failed!';
             }
-            await extract('./yy-boss-cli.zip', { dir: __dirname });
-            await fs.remove('./yy-boss-cli.zip');
-            if (process.platform == 'darwin') {
-                // Mac release structure is different, requires some effort
-                await fs.copyFile('./target/release/yy-boss-cli_darwin', bosspath);
-                await fs.remove('./target');
-            }
+
+            await extract(output_zip, { dir: bossDirectory });
+            await fs.remove(output_zip);
+
+            console.log('Updated succesfully');
         }
         return bosspath;
     }
