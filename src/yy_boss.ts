@@ -7,7 +7,13 @@ import { CommandOutputError } from './error';
 import * as path from 'path';
 import { stdout } from 'process';
 import { StartupOutputError } from './startup';
+import extract from 'extract-zip';
+import * as fs from 'fs-extra';
+import * as Axios from 'axios';
+import { Http2ServerResponse } from 'http2';
+import { promises } from 'fs-extra';
 
+const axios = Axios.default;
 const CURRENT_VERSION = 'yy-boss 0.4.5';
 
 abstract class Logging {
@@ -67,7 +73,7 @@ export class YyBoss {
         let output = yyBossVersionCheck.stdout.toString();
         if (output !== CURRENT_VERSION) {
             return [
-                new StartupOutputError('incorrect version of yy-boss exe given. we need 0.4.4'),
+                new StartupOutputError(`incorrect version of yy-boss exe given. we need ${CURRENT_VERSION}`),
                 undefined,
             ];
         }
@@ -140,5 +146,63 @@ export class YyBoss {
 
             this.yyBossHandle.stdin.write(JSON.stringify(new ShutdownCommand()) + '\n');
         });
+    }
+
+    static async fetchYyBoss(): Promise<String> {
+        // Fetches a compatible release of YYBoss from Github
+        async function download(url: string, dest: string): Promise<undefined> {
+            const response = await axios.get(url,{responseType:'stream'});
+            const writer = fs.createWriteStream(dest);
+            response.data.pipe(writer);
+            return new Promise<undefined>((resolve,reject)=>{
+                writer.on('finish',resolve);
+                writer.on('error',reject);
+            });
+        }
+        const version = CURRENT_VERSION.replace(/[a-z-]*\s/g,'');
+        let bosspath = '';
+        let update = false;
+        let bossurl = `https://github.com/NPC-Studio/yy-boss/releases/download/v${version}/YyBoss`;
+        if (process.platform == 'win32') {
+            bosspath = './yy-boss-cli.exe';
+            bossurl = `${bossurl}.zip`;
+        } else if (process.platform == 'darwin') {
+            bosspath = './yy-boss-cli_darwin';
+            bossurl = `${bossurl}.Darwin.zip`;
+        }
+        if (!fs.existsSync(bosspath)) {
+            console.log('We need to download')
+            update = true;
+        } else {
+            console.log('Check versions');
+            try {
+                const yyBossVersionCheck = spawnSync(bosspath, ['-v']);
+                const output = (yyBossVersionCheck.stdout.toString()).replace(/[a-z-]*\s/g,''); // removes any non number or dots
+                update = (output != version);
+                if (update) {
+                    console.log(`Version mismatch, have ${output}, require ${version}`);
+                } else {
+                    console.log(`Local version is current`);
+                }
+            } catch(e) {
+                console.log(`Local file cannot be run, force-updating`);
+                update = true;
+            }
+        }
+        if (update) { // file either doesn't exist, or we have the wrong version
+            console.log(`Updating from ${bossurl}`)
+            try {
+                await download(bossurl,'./yy-boss-cli.zip');
+            } catch(e) {
+                throw "Update from GitHub releases failed!"
+            }
+            await extract('./yy-boss-cli.zip',{dir:__dirname});
+            await fs.remove('./yy-boss-cli.zip');
+            if (process.platform == 'darwin') { // Mac release structure is different, requires some effort
+                await fs.copyFile('./target/release/yy-boss-cli_darwin',bosspath);
+                await fs.remove('./target');
+            }
+        }
+        return bosspath;
     }
 }
