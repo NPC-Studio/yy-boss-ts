@@ -145,7 +145,7 @@ export class YyBoss {
         });
     }
 
-    static async fetchYyBoss(bossDirectory: string, force: Boolean): Promise<string> {
+    static async fetchYyBoss(bossDirectory: string, force?: Boolean | undefined): Promise<string> {
         // Fetches a compatible release of YYBoss from Github
         async function download(url: string, dest: string): Promise<void> {
             const response = await axios.get(url, { responseType: 'stream' });
@@ -159,6 +159,7 @@ export class YyBoss {
 
         // resolve it to the full path...not really necessary, but good for debugging
         bossDirectory = path.resolve(bossDirectory);
+        force = force === undefined ? false : force;
 
         let bosspath = undefined;
         let update = false;
