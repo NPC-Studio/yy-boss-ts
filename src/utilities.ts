@@ -3,6 +3,8 @@ import { Command, CommandType, Resource, ViewPath, CommandOutput } from './core'
 export enum UtilitiesCommandType {
     Create = 'Create',
     PrettyEventNames = 'PrettyEventNames',
+    ScriptGmlPath = 'ScriptGmlPath',
+    EventGmlPath = 'EventGmlPath',
 }
 
 abstract class UtilitiesCommand extends Command {
@@ -26,9 +28,31 @@ export class PrettyEventNames extends UtilitiesCommand {
     }
 }
 
+export class ScriptGmlPath extends UtilitiesCommand {
+    protected subCommand: UtilitiesCommandType = UtilitiesCommandType.ScriptGmlPath;
+
+    constructor(private scriptName: string) {
+        super();
+    }
+}
+
+export class EventGmlPath extends UtilitiesCommand {
+    protected subCommand: UtilitiesCommandType = UtilitiesCommandType.EventGmlPath;
+
+    constructor(private objectName: string, private eventFileName: string) {
+        super();
+    }
+}
+
 export module outputs {
     export class PrettyEventOutput extends CommandOutput {
         constructor(public eventNames: string[]) {
+            super();
+        }
+    }
+
+    export class RequestedPathOutput extends CommandOutput {
+        constructor(public requestedPath: string) {
             super();
         }
     }

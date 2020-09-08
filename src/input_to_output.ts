@@ -19,7 +19,13 @@ import {
     outputs as vfsOutputs,
 } from './vfs';
 import { CommandOutputSuccessVoid, Command } from './core';
-import { CreateCommand, PrettyEventNames, outputs as utilOutputs } from './utilities';
+import {
+    CreateCommand,
+    PrettyEventNames,
+    outputs as utilOutputs,
+    ScriptGmlPath,
+    EventGmlPath,
+} from './utilities';
 
 // prettier-ignore
 export type CommandToOutput<T extends Command> = T extends
@@ -45,7 +51,9 @@ export type CommandToOutput<T extends Command> = T extends
     
     : T extends GetAssociatedDataResource
     ? resourceOutputs.ResourceAssociatedDataOutput
-
+    
+    : T extends ScriptGmlPath | EventGmlPath
+    ? utilOutputs.RequestedPathOutput
     
     // returns for boolean exists
     : T extends ExistsResource
