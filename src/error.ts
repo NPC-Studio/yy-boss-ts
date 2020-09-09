@@ -25,60 +25,60 @@ export enum YypBossErrorType {
 }
 
 export abstract class YypBossError {
-    protected abstract type: YypBossErrorType;
+    public abstract type: YypBossErrorType;
 }
 
 export class CouldNotReadCommand extends YypBossError {
-    protected type: YypBossErrorType = YypBossErrorType.CouldNotReadCommand;
+    type: YypBossErrorType = YypBossErrorType.CouldNotReadCommand;
     constructor(public data: string) {
         super();
     }
 }
 
 export class ResourceManipulation extends YypBossError {
-    protected type: YypBossErrorType = YypBossErrorType.ResourceManipulation;
+    type: YypBossErrorType = YypBossErrorType.ResourceManipulation;
     constructor(public data: string) {
         super();
     }
 }
 
 abstract class FolderGraphError extends YypBossError {
-    protected type: YypBossErrorType = YypBossErrorType.FolderGraphError;
+    type: YypBossErrorType = YypBossErrorType.FolderGraphError;
     constructor(public data: string) {
         super();
     }
 }
 
 export class YyParseError extends YypBossError {
-    protected type: YypBossErrorType = YypBossErrorType.YyParseError;
+    type: YypBossErrorType = YypBossErrorType.YyParseError;
     constructor(public data: string) {
         super();
     }
 }
 
 export class AssociatedDataParseError extends YypBossError {
-    protected type: YypBossErrorType = YypBossErrorType.AssociatedDataParseError;
+    type: YypBossErrorType = YypBossErrorType.AssociatedDataParseError;
     constructor(public data: string) {
         super();
     }
 }
 
 export class CouldNotOutputData extends YypBossError {
-    protected type: YypBossErrorType = YypBossErrorType.CouldNotOutputData;
+    type: YypBossErrorType = YypBossErrorType.CouldNotOutputData;
     constructor(public data: string) {
         super();
     }
 }
 
 export class CouldNotSerializeYypBoss extends YypBossError {
-    protected type: YypBossErrorType = YypBossErrorType.CouldNotSerializeYypBoss;
+    type: YypBossErrorType = YypBossErrorType.CouldNotSerializeYypBoss;
     constructor(public data: string) {
         super();
     }
 }
 
 export class InternalError extends YypBossError {
-    protected type: YypBossErrorType = YypBossErrorType.InternalError;
+    type: YypBossErrorType = YypBossErrorType.InternalError;
     constructor(public fatal: Boolean) {
         super();
     }
