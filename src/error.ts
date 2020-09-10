@@ -26,6 +26,39 @@ export enum YypBossErrorType {
 
 export abstract class YypBossError {
     public abstract type: YypBossErrorType;
+
+    public static error(v: YypBossError): string {
+        switch (v.type) {
+            case YypBossErrorType.CouldNotReadCommand:
+            case YypBossErrorType.ResourceManipulation:
+            case YypBossErrorType.FolderGraphError:
+            case YypBossErrorType.YyParseError:
+            case YypBossErrorType.AssociatedDataParseError:
+            case YypBossErrorType.CouldNotOutputData:
+            case YypBossErrorType.CouldNotSerializeYypBoss:
+                const value:
+                    | CouldNotReadCommand
+                    | ResourceManipulation
+                    | FolderGraphError
+                    | YyParseError
+                    | AssociatedDataParseError
+                    | CouldNotOutputData
+                    | CouldNotSerializeYypBoss = v as CouldNotReadCommand;
+
+                return `${v.type}, ${value.data}`;
+
+            case YypBossErrorType.InternalError:
+                const value_internal = v as InternalError;
+                let err;
+                if (value_internal.fatal) {
+                    err = 'was fatal';
+                } else {
+                    err = 'was not fatal';
+                }
+
+                return `${value_internal.type}, ${err}`;
+        }
+    }
 }
 
 export class CouldNotReadCommand extends YypBossError {
@@ -42,7 +75,7 @@ export class ResourceManipulation extends YypBossError {
     }
 }
 
-abstract class FolderGraphError extends YypBossError {
+export abstract class FolderGraphError extends YypBossError {
     type: YypBossErrorType = YypBossErrorType.FolderGraphError;
     constructor(public data: string) {
         super();

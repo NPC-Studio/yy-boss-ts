@@ -5,6 +5,7 @@ export enum VfsCommandType {
     MoveFolder = 'MoveFolder',
     CreateFolder = 'CreateFolder',
     RemoveFolder = 'RemoveFolder',
+    RenameFolder = 'RenameFolder',
     GetFolder = 'GetFolder',
     GetFullVfs = 'GetFullVfs',
     GetPathType = 'GetPathType',
@@ -66,6 +67,14 @@ export class RemoveFolderVfs extends VfsCommand {
         super();
         this.folder = folder;
         this.recursive = recursive;
+    }
+}
+
+export class RenameFolderVfs extends VfsCommand {
+    protected subCommand: VfsCommandType = VfsCommandType.RenameFolder;
+
+    constructor(private folder: string, private newName: string) {
+        super();
     }
 }
 

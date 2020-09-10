@@ -3,7 +3,7 @@ import { assert } from 'console';
 import { Output, OutputType, Command, CommandOutput } from './core';
 import { ShutdownCommand } from './shutdown';
 import { CommandToOutput } from './input_to_output';
-import { CommandOutputError } from './error';
+import { CommandOutputError, YyParseError } from './error';
 import * as path from 'path';
 import { stdout } from 'process';
 import { StartupOutputError } from './startup';
@@ -12,7 +12,7 @@ import * as fs from 'fs-extra';
 import * as Axios from 'axios';
 
 const axios = Axios.default;
-const CURRENT_VERSION = '0.4.5';
+const CURRENT_VERSION = '0.4.7';
 
 abstract class Logging {
     abstract logLevel: Log;
@@ -46,6 +46,13 @@ export class YyBoss {
 
     get hasClosed(): Boolean {
         return this.closureStatus;
+    }
+
+    noError(): Boolean {
+        if (this.error !== undefined) {
+            console.log(YyParseError.error(this.error.error));
+        }
+        return this.hasError;
     }
 
     private constructor(yyBossHandle: ChildProcessWithoutNullStreams) {
