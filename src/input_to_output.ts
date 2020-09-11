@@ -7,6 +7,7 @@ import {
     ExistsResource,
     outputs as resourceOutputs,
     GetAssociatedDataResource,
+    RenameResource,
 } from './resource';
 import {
     MoveResourceVfs,
@@ -38,6 +39,7 @@ export type CommandToOutput<T extends Command> = T extends
     | MoveFolderVfs
     | RemoveFolderVfs
     | RenameFolderVfs
+    | RenameResource
     ? CommandOutputSuccessVoid
 
     // full returns

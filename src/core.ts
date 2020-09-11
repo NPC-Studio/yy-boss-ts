@@ -62,7 +62,7 @@ export class SerializedDataDefault extends SerializedData {
 
 export abstract class Output {
     abstract type: OutputType;
-    abstract success: Boolean;
+    abstract success: boolean;
 }
 
 export enum OutputType {
@@ -80,7 +80,7 @@ export abstract class CommandOutput extends Output {
     get type(): OutputType {
         return OutputType.Command;
     }
-    get success(): Boolean {
+    get success(): boolean {
         return true;
     }
 }

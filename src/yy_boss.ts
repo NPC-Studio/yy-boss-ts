@@ -37,32 +37,27 @@ export enum Log {
 
 export class YyBoss {
     private yyBossHandle: ChildProcessWithoutNullStreams;
-    private closureStatus: Boolean;
-    error: CommandOutputError | undefined;
+    private closureStatus: boolean;
+    public error: CommandOutputError | undefined;
 
-    get hasError(): Boolean {
+    hasError(): this is { error: CommandOutputError } {
         return this.error !== undefined;
     }
 
-    get hasClosed(): Boolean {
+    get hasClosed(): boolean {
         return this.closureStatus;
-    }
-
-    noError(): Boolean {
-        if (this.error !== undefined) {
-            console.log(YyParseError.error(this.error.error));
-        }
-        return this.hasError;
     }
 
     private constructor(yyBossHandle: ChildProcessWithoutNullStreams) {
         this.yyBossHandle = yyBossHandle;
         this.closureStatus = false;
 
-        yyBossHandle.on('close', code => {
-            console.log(`Yy-Boss has shut down! Exited with ${code}`);
+        yyBossHandle.on('close', (code, signal) => {
+            console.log(`SHUTDOWN: ${signal} ${code}`);
         });
-        yyBossHandle.stderr.pipe(stdout);
+        yyBossHandle.on('error', error => {
+            console.log(error);
+        });
     }
 
     static async create(
@@ -152,7 +147,7 @@ export class YyBoss {
         });
     }
 
-    static async fetchYyBoss(bossDirectory: string, force?: Boolean | undefined): Promise<string> {
+    static async fetchYyBoss(bossDirectory: string, force?: boolean | undefined): Promise<string> {
         // Fetches a compatible release of YYBoss from Github
         async function download(url: string, dest: string): Promise<void> {
             const response = await axios.get(url, { responseType: 'stream' });

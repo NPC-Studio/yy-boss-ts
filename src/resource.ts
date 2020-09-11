@@ -3,6 +3,7 @@ import { Command, CommandType, Resource, CommandOutput, SerializedData, Serializ
 export enum ResourceCommandType {
     Add = 'Add',
     Remove = 'Remove',
+    Rename = 'Rename',
     Get = 'Get',
     GetAssociatedData = 'GetAssociatedData',
     Exists = 'Exists',
@@ -42,6 +43,14 @@ export class RemoveResource extends ResourceCommand {
     }
 }
 
+export class RenameResource extends ResourceCommand {
+    protected subCommand: ResourceCommandType = ResourceCommandType.Rename;
+
+    constructor(resource: Resource, protected identifier: string, protected newName: string) {
+        super(resource);
+    }
+}
+
 export class GetResource extends ResourceCommand {
     protected subCommand: ResourceCommandType = ResourceCommandType.Get;
     protected identifier: string;
@@ -72,7 +81,7 @@ export class ExistsResource extends ResourceCommand {
 
 export module outputs {
     export class ResourceExistsOutput extends CommandOutput {
-        constructor(public exists: Boolean) {
+        constructor(public exists: boolean) {
             super();
         }
     }

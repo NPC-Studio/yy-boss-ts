@@ -61,9 +61,9 @@ export class RemoveFolderVfs extends VfsCommand {
     protected subCommand: VfsCommandType = VfsCommandType.RemoveFolder;
 
     private folder: string;
-    private recursive: Boolean;
+    private recursive: boolean;
 
-    constructor(folder: string, recursive: Boolean) {
+    constructor(folder: string, recursive: boolean) {
         super();
         this.folder = folder;
         this.recursive = recursive;

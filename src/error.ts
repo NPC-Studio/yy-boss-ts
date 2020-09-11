@@ -3,7 +3,7 @@ import { CommandOutput, Resource } from './core';
 export class CommandOutputError extends CommandOutput {
     error: YypBossError;
 
-    get success(): Boolean {
+    get success(): boolean {
         return false;
     }
 
@@ -112,7 +112,7 @@ export class CouldNotSerializeYypBoss extends YypBossError {
 
 export class InternalError extends YypBossError {
     type: YypBossErrorType = YypBossErrorType.InternalError;
-    constructor(public fatal: Boolean) {
+    constructor(public fatal: boolean) {
         super();
     }
 }

@@ -4,7 +4,7 @@ export class StartupOutputSuccess extends Output {
     get type(): OutputType {
         return OutputType.Startup;
     }
-    get success(): Boolean {
+    get success(): boolean {
         return true;
     }
 }
@@ -15,7 +15,7 @@ export class StartupOutputError extends Output {
     }
     startupError: string;
 
-    get success(): Boolean {
+    get success(): boolean {
         return false;
     }
 
