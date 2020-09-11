@@ -27,7 +27,10 @@ import {
     outputs as utilOutputs,
     ScriptGmlPath,
     EventGmlPath,
+    CanUseResourceName,
+    CanUseFolderName,
 } from './utilities';
+import { utilities } from '.';
 
 // prettier-ignore
 export type CommandToOutput<T extends Command> = T extends
@@ -74,6 +77,9 @@ export type CommandToOutput<T extends Command> = T extends
     // returns a pathkind
     : T extends GetPathTypeVfs
     ? vfsOutputs.PathKindOutput
+    
+    : T extends CanUseResourceName | CanUseFolderName
+    ? utilities.outputs.NameIsValidOutput
 
     // should never be seen!
     : never;

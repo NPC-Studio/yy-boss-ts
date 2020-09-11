@@ -5,6 +5,8 @@ export enum UtilitiesCommandType {
     PrettyEventNames = 'PrettyEventNames',
     ScriptGmlPath = 'ScriptGmlPath',
     EventGmlPath = 'EventGmlPath',
+    CanUseResourceName = 'CanUseResourceName',
+    CanUseFolderName = 'CanUseFolderName',
 }
 
 abstract class UtilitiesCommand extends Command {
@@ -44,6 +46,22 @@ export class EventGmlPath extends UtilitiesCommand {
     }
 }
 
+export class CanUseResourceName extends UtilitiesCommand {
+    protected subCommand: UtilitiesCommandType = UtilitiesCommandType.CanUseResourceName;
+
+    constructor(private identifier: string) {
+        super();
+    }
+}
+
+export class CanUseFolderName extends UtilitiesCommand {
+    protected subCommand: UtilitiesCommandType = UtilitiesCommandType.CanUseFolderName;
+
+    constructor(private parentFolder: string, private identifier: string) {
+        super();
+    }
+}
+
 export module outputs {
     export class PrettyEventOutput extends CommandOutput {
         constructor(public eventNames: string[]) {
@@ -53,6 +71,12 @@ export module outputs {
 
     export class RequestedPathOutput extends CommandOutput {
         constructor(public requestedPath: string) {
+            super();
+        }
+    }
+
+    export class NameIsValidOutput extends CommandOutput {
+        constructor(public nameIsValid: boolean) {
             super();
         }
     }
