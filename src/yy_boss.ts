@@ -40,6 +40,12 @@ export const enum ClosureStatus {
     UnexpectedShutdown,
 }
 
+export const enum YyBossDownloadStatus {
+    NoBoss,
+    IncorrectVersion,
+    Success,
+}
+
 class ShutdownCommand extends Command {
     protected type: CommandType = CommandType.Shutdown;
 }
@@ -323,6 +329,42 @@ export class YyBoss {
         }
 
         return bosspath;
+    }
+
+    /**
+     * Checks if a YyBoss is at the given path, and if it is the correct version. This is basically
+     * the first half of `fetch`, and it should be merged together in some subroutine somehow.
+     *
+     * @param bossDirectory The directory to downlad the YyBoss to. The Filename will depend on the version
+     * of the boss.
+     */
+    public static async downloadStatus(bossDirectory: string): Promise<YyBossDownloadStatus> {
+        // resolve it to the full path...not really necessary, but good for debugging
+        bossDirectory = path.resolve(bossDirectory);
+
+        // make sure the directory is valid, so we can write and read below
+        await fs.ensureDir(bossDirectory);
+
+        let bosspath = undefined;
+
+        if (process.platform == 'win32') {
+            bosspath = path.join(bossDirectory, 'yy-boss-cli.exe');
+        } else if (process.platform == 'darwin') {
+            bosspath = path.join(bossDirectory, 'yy-boss-cli_darwin');
+        } else {
+            throw 'Fetch does not have support for Linux!';
+        }
+
+        if (!fs.existsSync(bosspath)) {
+            return YyBossDownloadStatus.NoBoss;
+        } else {
+            const output = this.getVersion(bosspath);
+            if (output !== CURRENT_VERSION) {
+                return YyBossDownloadStatus.IncorrectVersion;
+            } else {
+                return YyBossDownloadStatus.Success;
+            }
+        }
     }
 
     public static getVersion(yyBossPath: string): string | undefined {
