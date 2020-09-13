@@ -1,4 +1,4 @@
-export enum CommandType {
+export const enum CommandType {
     Resource = 'Resource',
     VirtualFileSystem = 'VirtualFileSystem',
     Utilities = 'Utilities',
@@ -20,13 +20,13 @@ export interface FilesystemPath {
     path: string;
 }
 
-export enum Resource {
+export const enum Resource {
     Sprite = 'Sprite',
     Script = 'Script',
     Object = 'Object',
 }
 
-export enum SerializedDataType {
+export const enum SerializedDataType {
     Value = 'Value',
     Filepath = 'Filepath',
     DefaultValue = 'DefaultValue',
@@ -65,13 +65,13 @@ export abstract class Output {
     abstract success: boolean;
 }
 
-export enum OutputType {
+export const enum OutputType {
     Startup = 'Startup',
     Command = 'Command',
     Shutdown = 'Shutdown',
 }
 
-export enum Item {
+export const enum Item {
     Folder = 'Folder',
     Resource = 'Resource',
 }

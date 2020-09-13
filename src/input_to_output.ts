@@ -29,6 +29,8 @@ import {
     EventGmlPath,
     CanUseResourceName,
     CanUseFolderName,
+    CreateEvent,
+    DeleteEvent,
 } from './utilities';
 import { utilities } from '.';
 
@@ -43,6 +45,8 @@ export type CommandToOutput<T extends Command> = T extends
     | RemoveFolderVfs
     | RenameFolderVfs
     | RenameResource
+    | CreateEvent
+    | DeleteEvent
     ? CommandOutputSuccessVoid
 
     // full returns

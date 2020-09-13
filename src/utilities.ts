@@ -1,7 +1,9 @@
 import { Command, CommandType, Resource, ViewPath, CommandOutput } from './core';
 
-export enum UtilitiesCommandType {
+export const enum UtilitiesCommandType {
     Create = 'Create',
+    CreateEvent = 'CreateEvent',
+    DeleteEvent = 'DeleteEvent',
     PrettyEventNames = 'PrettyEventNames',
     ScriptGmlPath = 'ScriptGmlPath',
     EventGmlPath = 'EventGmlPath',
@@ -26,6 +28,22 @@ export class PrettyEventNames extends UtilitiesCommand {
     protected subCommand: UtilitiesCommandType = UtilitiesCommandType.PrettyEventNames;
 
     constructor(private eventNames: string[]) {
+        super();
+    }
+}
+
+export class CreateEvent extends UtilitiesCommand {
+    protected subCommand: UtilitiesCommandType = UtilitiesCommandType.CreateEvent;
+
+    constructor(private identifier: string, private eventFileName: string) {
+        super();
+    }
+}
+
+export class DeleteEvent extends UtilitiesCommand {
+    protected subCommand: UtilitiesCommandType = UtilitiesCommandType.DeleteEvent;
+
+    constructor(private identifier: string, private eventFileName: string) {
         super();
     }
 }

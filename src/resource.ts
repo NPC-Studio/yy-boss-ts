@@ -1,6 +1,6 @@
 import { Command, CommandType, Resource, CommandOutput, SerializedData, SerializedDataType } from './core';
 
-export enum ResourceCommandType {
+export const enum ResourceCommandType {
     Add = 'Add',
     Remove = 'Remove',
     Rename = 'Rename',

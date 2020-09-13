@@ -29,7 +29,7 @@ export class LogToStdErr extends Logging {
     logLevel = Log.LogToStdErr;
 }
 
-export enum Log {
+export const enum Log {
     DoNotLog,
     LogToFile,
     LogToStdErr,

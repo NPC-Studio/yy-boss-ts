@@ -1,6 +1,6 @@
 import { Command, CommandType, Resource, ViewPath, CommandOutput, Item, FilesystemPath } from './core';
 
-export enum VfsCommandType {
+export const enum VfsCommandType {
     MoveResource = 'MoveResource',
     MoveFolder = 'MoveFolder',
     CreateFolder = 'CreateFolder',

@@ -13,7 +13,7 @@ export class CommandOutputError extends CommandOutput {
     }
 }
 
-export enum YypBossErrorType {
+export const enum YypBossErrorType {
     CouldNotReadCommand = 'CouldNotReadCommand',
     ResourceManipulation = 'ResourceManipulation',
     FolderGraphError = 'FolderGraphError',
