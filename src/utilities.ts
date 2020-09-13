@@ -1,6 +1,7 @@
-import { Command, CommandType, Resource, ViewPath, CommandOutput } from './core';
+import { Command, CommandType, Resource, ViewPath, CommandOutput, ProjectMetadata } from './core';
 
 export const enum UtilitiesCommandType {
+    ProjectInfo = 'ProjectInfo',
     Create = 'Create',
     CreateEvent = 'CreateEvent',
     DeleteEvent = 'DeleteEvent',
@@ -15,6 +16,10 @@ export const enum UtilitiesCommandType {
 abstract class UtilitiesCommand extends Command {
     protected type: CommandType = CommandType.Utilities;
     protected abstract subCommand: UtilitiesCommandType;
+}
+
+export class ProjectInfo extends UtilitiesCommand {
+    protected subCommand: UtilitiesCommandType = UtilitiesCommandType.ProjectInfo;
 }
 
 export class CreateResourceYyFile extends UtilitiesCommand {
@@ -96,6 +101,12 @@ export module outputs {
 
     export class NameIsValidOutput extends CommandOutput {
         constructor(public nameIsValid: boolean) {
+            super();
+        }
+    }
+
+    export class ProjectMetadataOutput extends CommandOutput {
+        constructor(public projectMetadata: ProjectMetadata) {
             super();
         }
     }

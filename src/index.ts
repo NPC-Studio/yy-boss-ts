@@ -9,7 +9,7 @@ import {
     Item,
 } from './core';
 import * as core from './core';
-import * as utilities from './utilities';
+import * as util from './utilities';
 import * as errors from './error';
 import * as resourceCommand from './resource';
 import * as serializationCommand from './serialization';
@@ -20,7 +20,7 @@ import { YyBoss } from './yy_boss';
 export {
     // re-exports...
     core,
-    utilities,
+    util,
     errors,
     resourceCommand,
     serializationCommand,

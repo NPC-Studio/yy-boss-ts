@@ -20,6 +20,13 @@ export interface FilesystemPath {
     path: string;
 }
 
+export interface ProjectMetadata {
+    name: string;
+    ideVersion: string;
+    yypVersion: string;
+    rootFile: ViewPath;
+}
+
 export const enum Resource {
     Sprite = 'Sprite',
     Script = 'Script',

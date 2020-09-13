@@ -1,4 +1,4 @@
-import { Output, OutputType } from './core';
+import { Output, OutputType, ProjectMetadata } from './core';
 
 export class StartupOutputSuccess extends Output {
     get type(): OutputType {
@@ -6,6 +6,10 @@ export class StartupOutputSuccess extends Output {
     }
     get success(): boolean {
         return true;
+    }
+
+    constructor(public projectMetadata: ProjectMetadata) {
+        super();
     }
 }
 

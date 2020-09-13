@@ -30,8 +30,8 @@ import {
     CanUseFolderName,
     CreateEvent,
     DeleteEvent,
+    ProjectInfo,
 } from './utilities';
-import { utilities } from '.';
 
 // prettier-ignore
 export type CommandToOutput<T extends Command> = T extends
@@ -46,6 +46,9 @@ export type CommandToOutput<T extends Command> = T extends
     | CreateEvent
     | DeleteEvent
     ? CommandOutputSuccessVoid
+
+    : T extends ProjectInfo
+    ? utilOutputs.ProjectMetadataOutput
 
     // full returns
     : T extends RemoveResource
@@ -81,7 +84,7 @@ export type CommandToOutput<T extends Command> = T extends
     ? vfsOutputs.PathKindOutput
     
     : T extends CanUseResourceName | CanUseFolderName
-    ? utilities.outputs.NameIsValidOutput
+    ? utilOutputs.NameIsValidOutput
 
     // should never be seen!
     : never;
