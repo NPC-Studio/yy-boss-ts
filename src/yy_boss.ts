@@ -1,17 +1,16 @@
 import { spawn, ChildProcessWithoutNullStreams, spawnSync } from 'child_process';
 import { assert } from 'console';
-import { Output, OutputType, Command, CommandOutput } from './core';
-import { ShutdownCommand } from './shutdown';
+import { Output, OutputType, Command, CommandOutput, CommandType } from './core';
 import { CommandToOutput } from './input_to_output';
-import { CommandOutputError, YyParseError } from './error';
+import { CommandOutputError, YypBossError } from './error';
 import * as path from 'path';
-import { stdout } from 'process';
 import { StartupOutputError } from './startup';
 import extract from 'extract-zip';
 import * as fs from 'fs-extra';
 import * as Axios from 'axios';
+import { stdout } from 'process';
 
-const axios = Axios.default;
+const AXIOS = Axios.default;
 const CURRENT_VERSION = '0.4.7';
 
 abstract class Logging {
@@ -35,32 +34,72 @@ export const enum Log {
     LogToStdErr,
 }
 
+export const enum ClosureStatus {
+    Open,
+    ExpectedShutdown,
+    UnexpectedShutdown,
+}
+
+class ShutdownCommand extends Command {
+    protected type: CommandType = CommandType.Shutdown;
+}
+
 export class YyBoss {
     private yyBossHandle: ChildProcessWithoutNullStreams;
-    private closureStatus: boolean;
-    public error: CommandOutputError | undefined;
+    private _closureStatus: ClosureStatus = ClosureStatus.Open;
+    private onUnexpectedShutdown: (() => Promise<void>)[] = [];
+    private _error: YypBossError | undefined;
 
-    hasError(): this is { error: CommandOutputError } {
-        return this.error !== undefined;
+    /**
+     * The error the last command may have returned.
+     */
+    public get error(): YypBossError | undefined {
+        return this._error;
     }
 
-    get hasClosed(): boolean {
-        return this.closureStatus;
+    /**
+     * Checks if the last command issued an error.
+     */
+    public hasError(): this is { error: YypBossError } {
+        return this._error !== undefined;
+    }
+
+    /**
+     * Polls the current closure status.
+     */
+    public get closureStatus(): ClosureStatus {
+        return this._closureStatus;
     }
 
     private constructor(yyBossHandle: ChildProcessWithoutNullStreams) {
         this.yyBossHandle = yyBossHandle;
-        this.closureStatus = false;
 
-        yyBossHandle.on('close', (code, signal) => {
+        yyBossHandle.on('close', async (code, signal) => {
+            if (this.closureStatus == ClosureStatus.Open) {
+                this._closureStatus = ClosureStatus.UnexpectedShutdown;
+
+                for (const cback of this.onUnexpectedShutdown) {
+                    await cback();
+                }
+            }
             console.log(`SHUTDOWN: ${signal} ${code}`);
         });
-        yyBossHandle.on('error', error => {
-            console.log(error);
-        });
+        yyBossHandle.stderr.pipe(stdout);
     }
 
-    static async create(
+    /**
+     * Creates a new YyBoss.
+     *
+     * @param yyBossPath The path to the YyBoss server executable. If you do not have the binary, please download it using
+     * `YyBoss.fetchYyBoss`.
+     * @param yypPath The path to the yyp for the yyBoss to operate on. In the future, the YyBoss will be able to operate
+     * in a headless manner, but not currently.
+     * @param wd The path to the working directory. The YyBoss occasionally reads and writes files, rather than talking
+     * exclusively over stdio, and this directory is a safe place for it to read and write.
+     * @param log The log level that the YyBoss should use. Please note, by default, logs to `stderr` are piped into the current
+     * NodeJs `stdout` log. In the future, this behavior will be customizable.
+     */
+    public static async create(
         yyBossPath: string,
         yypPath: string,
         wd: string,
@@ -113,13 +152,47 @@ export class YyBoss {
         });
     }
 
-    writeCommand<T extends Command>(command: T): Promise<CommandToOutput<T>> {
+    /**
+     * Write a new command to the YyBoss. This is the core function of the library.
+     *
+     * Each command is found in separate modules, grouped by their type. A command's type
+     * will **appear** to always return some value -- in actuality, however, a command **can**
+     * return undefined, but we bend the type system so they appear to not.
+     *
+     * We do this so that users who are confident that their commands will not cause an error
+     * can press on, disregarding the possibility of an undefined, without using ugly casts around
+     * `await` calls. Because we *do* return an undefined, most of the time, users will immediately
+     * encounter their error.
+     *
+     * To make sure that your command succeeded without error, check `YyBoss.hasError()`, which will
+     * inform you of the current error status. If there is an error, you can view the error using `YyBoss.error`, which
+     * will be reset to undefined on each new command (so past errors *can* be lost if you issue successive commands).
+     * Right now, errors are untyped -- most commands only issue a subset of the possible sphere of errors, and some errors
+     * should never be seen by users. In the future, errors will be typed by the command issued, like how this function handles
+     * return types.
+     *
+     * Finally, this commands has a variadic return type. You **do** have static typing, however; see `CommandToOutput` for
+     * a listing of each Command to CommandOutput. In short, whatever type of Command you input will instruct Typescript as to
+     * the return type of the output. In practice, this allows for successive calls, such as:
+     *
+     * ```ts
+     * const root = await yyBoss.writeCommand(new vfsCommands.GetFullVfs());
+     * const new_folder = await yyBoss.writeCommand(new vfsCommands.CreateFolderVfs(root.flatFolderGraph.viewPath, "Sprites"));
+     * const new_sprite = await yyBoss.writeCommand(new utilities.CreateResourceYyFile(Resource.Sprite, "spr_player", new_folder));
+     * await yyBoss.writeCommand(new resourceCommands.AddResource(Resource.Sprite, new_sprite, new SerializedDataDefault()));
+     * ```
+     * For more information, please see the project's Github page.
+     *
+     * @param command The command to send to the YyBoss. The return type of this function
+     * is dependent on the command issued.
+     */
+    public writeCommand<T extends Command>(command: T): Promise<CommandToOutput<T>> {
         return new Promise((resolve, _) => {
             this.yyBossHandle.stdout.once('data', (chonk: string) => {
                 let cmd: CommandOutput = JSON.parse(chonk);
 
                 if (cmd.success === false) {
-                    this.error = cmd as CommandOutputError;
+                    this._error = (cmd as CommandOutputError).error;
                     resolve();
                 } else {
                     resolve(cmd as CommandToOutput<T>);
@@ -128,16 +201,20 @@ export class YyBoss {
 
             let gonna_write = JSON.stringify(command) + '\n';
             this.yyBossHandle.stdin.write(gonna_write);
-            this.error = undefined;
+            this._error = undefined;
         });
     }
 
-    shutdown(): Promise<Output> {
+    /**
+     * Shuts the YyBoss down internally, and safely. Callbacks attached with `YyBoss.attachUnexpectedShutdownCallback`
+     * will **not** be called.
+     */
+    public shutdown(): Promise<Output> {
         return new Promise((resolve, _) => {
             this.yyBossHandle.stdout.once('data', chonk => {
                 let output: Output = JSON.parse(chonk);
                 if (output.success) {
-                    this.closureStatus = true;
+                    this._closureStatus = ClosureStatus.ExpectedShutdown;
                 }
 
                 resolve(output);
@@ -147,10 +224,32 @@ export class YyBoss {
         });
     }
 
-    static async fetchYyBoss(bossDirectory: string, force?: boolean | undefined): Promise<string> {
+    /**
+     * Attaches a callback to be fired when an unexpected shutdown occurs.
+     *
+     * This isn't an excellent design, so please submit a PR or an issue if you know
+     * a better, more idiomatic way to handle this.
+     *
+     * @param cback The callback to fire when an unexpected shutdown occurs.
+     */
+    public attachUnexpectedShutdownCallback(cback: () => Promise<void>) {
+        this.onUnexpectedShutdown.push(cback);
+    }
+
+    /**
+     * Downloads a YyBoss from the Github release pages to a directory of a users choosing. This allows
+     * downstream crates to avoid packaging the server exe with them. Thanks to Sidorakh for contributing
+     * this work!
+     *
+     * @param bossDirectory The directory to download the YyBoss to. The filename will depend on the version
+     * of the boss.
+     * @param force If true, forces a download of a new YyBoss, even if the current boss is of the correct
+     * version number.
+     */
+    public static async fetchYyBoss(bossDirectory: string, force?: boolean | undefined): Promise<string> {
         // Fetches a compatible release of YYBoss from Github
         async function download(url: string, dest: string): Promise<void> {
-            const response = await axios.get(url, { responseType: 'stream' });
+            const response = await AXIOS.get(url, { responseType: 'stream' });
             const writer = fs.createWriteStream(dest);
             response.data.pipe(writer);
             return new Promise<undefined>((resolve, reject) => {
@@ -222,10 +321,11 @@ export class YyBoss {
 
             console.log('Updated succesfully');
         }
+
         return bosspath;
     }
 
-    static getVersion(yyBossPath: string): string | undefined {
+    public static getVersion(yyBossPath: string): string | undefined {
         try {
             const yyBossVersionCheck = spawnSync(yyBossPath, ['-v']);
             return yyBossVersionCheck.stdout.toString().replace(/[a-z-]*\s/g, '');

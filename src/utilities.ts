@@ -9,6 +9,7 @@ export const enum UtilitiesCommandType {
     EventGmlPath = 'EventGmlPath',
     CanUseResourceName = 'CanUseResourceName',
     CanUseFolderName = 'CanUseFolderName',
+    Crash = 'Crash',
 }
 
 abstract class UtilitiesCommand extends Command {
@@ -16,7 +17,7 @@ abstract class UtilitiesCommand extends Command {
     protected abstract subCommand: UtilitiesCommandType;
 }
 
-export class CreateCommand extends UtilitiesCommand {
+export class CreateResourceYyFile extends UtilitiesCommand {
     protected subCommand: UtilitiesCommandType = UtilitiesCommandType.Create;
 
     constructor(private resource: Resource, private name?: string, private parent?: ViewPath) {

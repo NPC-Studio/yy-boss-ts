@@ -11,11 +11,10 @@ import {
 import * as core from './core';
 import * as utilities from './utilities';
 import * as errors from './error';
-import * as resourceCommands from './resource';
-import * as serializationCommands from './serialization';
-import * as shutdownCommands from './shutdown';
-import * as startupOutputs from './startup';
-import * as vfsCommands from './vfs';
+import * as resourceCommand from './resource';
+import * as serializationCommand from './serialization';
+import * as startupOutput from './startup';
+import * as vfsCommand from './vfs';
 import { YyBoss } from './yy_boss';
 
 export {
@@ -23,11 +22,10 @@ export {
     core,
     utilities,
     errors,
-    resourceCommands,
-    serializationCommands,
-    shutdownCommands,
-    startupOutputs,
-    vfsCommands,
+    resourceCommand,
+    serializationCommand,
+    startupOutput,
+    vfsCommand,
     // simple re-exports...
     YyBoss,
     ViewPath,

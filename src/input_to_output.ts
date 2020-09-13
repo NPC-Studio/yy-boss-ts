@@ -1,5 +1,4 @@
 import { SerializationCommand } from './serialization';
-import { ShutdownCommand } from './shutdown';
 import {
     AddResource,
     RemoveResource,
@@ -22,7 +21,7 @@ import {
 } from './vfs';
 import { CommandOutputSuccessVoid, Command } from './core';
 import {
-    CreateCommand,
+    CreateResourceYyFile,
     PrettyEventNames,
     outputs as utilOutputs,
     ScriptGmlPath,
@@ -38,7 +37,6 @@ import { utilities } from '.';
 export type CommandToOutput<T extends Command> = T extends
     // Returns for Nulls
     SerializationCommand
-    | ShutdownCommand
     | AddResource
     | MoveResourceVfs
     | MoveFolderVfs
@@ -57,7 +55,7 @@ export type CommandToOutput<T extends Command> = T extends
     : T extends PrettyEventNames
     ? utilOutputs.PrettyEventOutput
     
-    : T extends GetResource | CreateCommand
+    : T extends GetResource | CreateResourceYyFile
     ? resourceOutputs.ResourceDataOutput
     
     : T extends GetAssociatedDataResource
