@@ -88,7 +88,7 @@ export class CanUseFolderName extends UtilitiesCommand {
 
 export module outputs {
     export class PrettyEventOutput extends CommandOutput {
-        constructor(public eventNames: string[]) {
+        constructor(public eventNames: Array<[string, string]>) {
             super();
         }
     }

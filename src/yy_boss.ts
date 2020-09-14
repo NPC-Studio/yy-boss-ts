@@ -35,9 +35,9 @@ export const enum Log {
 }
 
 export const enum ClosureStatus {
-    Open,
-    ExpectedShutdown,
-    UnexpectedShutdown,
+    Open = 'Open',
+    ExpectedShutdown = 'ExpectedShutdown',
+    UnexpectedShutdown = 'UnexpectedShutdown',
 }
 
 export const enum YyBossDownloadStatus {
@@ -81,14 +81,14 @@ export class YyBoss {
         this.yyBossHandle = yyBossHandle;
 
         yyBossHandle.on('close', async (code, signal) => {
-            if (this.closureStatus == ClosureStatus.Open) {
+            if (this.closureStatus === ClosureStatus.Open) {
                 this._closureStatus = ClosureStatus.UnexpectedShutdown;
 
                 for (const cback of this.onUnexpectedShutdown) {
                     await cback();
                 }
             }
-            console.log(`SHUTDOWN: ${signal} ${code}`);
+            console.log(`${this._closureStatus} Shutdown: ${signal} ${code}`);
         });
         yyBossHandle.stderr.pipe(stdout);
     }
@@ -205,8 +205,8 @@ export class YyBoss {
                 }
             });
 
-            let gonna_write = JSON.stringify(command) + '\n';
-            this.yyBossHandle.stdin.write(gonna_write);
+            let instruction = JSON.stringify(command) + '\n';
+            this.yyBossHandle.stdin.write(instruction);
             this._error = undefined;
         });
     }
@@ -217,16 +217,14 @@ export class YyBoss {
      */
     public shutdown(): Promise<Output> {
         return new Promise((resolve, _) => {
-            this.yyBossHandle.stdout.once('data', chonk => {
-                let output: Output = JSON.parse(chonk);
-                if (output.success) {
-                    this._closureStatus = ClosureStatus.ExpectedShutdown;
-                }
-
+            this.yyBossHandle.stdout.once('data', (chonk: Buffer) => {
+                let output: Output = JSON.parse(chonk.toString());
                 resolve(output);
             });
 
-            this.yyBossHandle.stdin.write(JSON.stringify(new ShutdownCommand()) + '\n');
+            this._closureStatus = ClosureStatus.ExpectedShutdown;
+            const instruction = JSON.stringify(new ShutdownCommand()) + '\n';
+            this.yyBossHandle.stdin.write(instruction);
         });
     }
 
