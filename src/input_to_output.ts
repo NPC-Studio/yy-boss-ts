@@ -17,7 +17,7 @@ import {
     GetFullVfs,
     GetPathTypeVfs,
     outputs as vfsOutputs,
-    RenameFolderVfs,
+    // RenameFolderVfs,
 } from './vfs';
 import { CommandOutputSuccessVoid, Command } from './core';
 import {
@@ -41,7 +41,7 @@ export type CommandToOutput<T extends Command> = T extends
     | MoveResourceVfs
     | MoveFolderVfs
     | RemoveFolderVfs
-    | RenameFolderVfs
+    // | RenameFolderVfs
     | RenameResource
     | CreateEvent
     | DeleteEvent

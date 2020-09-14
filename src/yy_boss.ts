@@ -218,7 +218,11 @@ export class YyBoss {
     public shutdown(): Promise<Output> {
         return new Promise((resolve, _) => {
             this.yyBossHandle.stdout.once('data', (chonk: Buffer) => {
+                console.log('hello from the whatever');
                 let output: Output = JSON.parse(chonk.toString());
+                // commented out, this never returns control
+                // commented in, this returns control
+                // console.log('hello again friend');
                 resolve(output);
             });
 
