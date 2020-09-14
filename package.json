@@ -1,6 +1,6 @@
 {
     "name": "yy-boss-ts",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "description": "A shim to handle the YyBoss exe.",
     "main": "./out/index.js",
     "types": "./out/index.d.ts",

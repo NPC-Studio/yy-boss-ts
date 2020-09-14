@@ -11,7 +11,7 @@ import * as Axios from 'axios';
 import { stdout } from 'process';
 
 const AXIOS = Axios.default;
-const CURRENT_VERSION = '0.4.7';
+const CURRENT_VERSION = '0.4.8';
 
 abstract class Logging {
     abstract logLevel: Log;

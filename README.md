@@ -1,6 +1,6 @@
 # YY-BOSS-TS
 
-This is a Typescript native binding for the Yy-Boss Json Api. It is in early stages of development, but will be complete, as much as the YyBoss is, in the foreseeable future.
+This is a Typescript binding for the Yy-Boss Json Api. It is in early stages of development, but will be complete, as much as the YyBoss is, in the foreseeable future.
 
 The **YyBoss** is an executable which is capable of making changes to a given Gms2, 2.3, project. It takes Json commands over stdin. It is, itself, written in Rust, and can also be used as a library for other Rust projects.
 
@@ -16,7 +16,7 @@ async function main() {
 }
 ```
 
-More details on the YyBoss project generally can be found here, at [https://github.com/NPC-Studio/yy-boss](the YyBoss Github page).
+More details on the YyBoss project generally can be found here, at [the YyBoss Github page](https://github.com/NPC-Studio/yy-boss).
 
 ## License
 
