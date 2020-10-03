@@ -40,11 +40,11 @@ export const enum SerializedDataType {
 }
 
 export abstract class SerializedData {
-    abstract dataType: SerializedDataType;
+    protected abstract dataType: SerializedDataType;
 }
 
 export class SerializedDataValue extends SerializedData {
-    dataType: SerializedDataType = SerializedDataType.Value;
+    protected dataType: SerializedDataType = SerializedDataType.Value;
     data: string;
 
     constructor(data: string) {
@@ -54,8 +54,8 @@ export class SerializedDataValue extends SerializedData {
 }
 
 export class SerializedDataFilepath extends SerializedData {
-    dataType: SerializedDataType = SerializedDataType.Filepath;
-    protected data: string;
+    protected dataType: SerializedDataType = SerializedDataType.Filepath;
+    data: string;
 
     constructor(filepath: string) {
         super();
@@ -64,7 +64,7 @@ export class SerializedDataFilepath extends SerializedData {
 }
 
 export class SerializedDataDefault extends SerializedData {
-    dataType: SerializedDataType = SerializedDataType.DefaultValue;
+    protected dataType: SerializedDataType = SerializedDataType.DefaultValue;
 }
 
 export abstract class Output {
