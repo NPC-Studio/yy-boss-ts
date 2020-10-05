@@ -31,6 +31,17 @@ export const enum Resource {
     Sprite = 'Sprite',
     Script = 'Script',
     Object = 'Object',
+    Note = 'Note',
+    Shader = 'Shader',
+    AnimationCurve = 'AnimationCurve',
+    Extension = 'Extension',
+    Font = 'Font',
+    Path = 'Path',
+    Room = 'Room',
+    Sequence = 'Sequence',
+    Sound = 'Sound',
+    TileSet = 'TileSet',
+    Timeline = 'Timeline',
 }
 
 export const enum SerializedDataType {
