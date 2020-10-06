@@ -46,6 +46,8 @@ export class YyBoss {
     private _closureStatus: ClosureStatus = ClosureStatus.Open;
     private onUnexpectedShutdown: (() => Promise<void>)[] = [];
     private _error: YypBossError | undefined;
+    private buff: string = '';
+    private expected_callback: ((arg0: CommandOutput | undefined) => void) | undefined;
 
     /**
      * The error the last command may have returned.
@@ -82,6 +84,28 @@ export class YyBoss {
             console.log(`${this._closureStatus} Shutdown: ${signal} ${code}`);
         });
         yyBossHandle.stderr.pipe(stdout);
+
+        this.yyBossHandle.stdout.on('data', (chonk: string) => {
+            try {
+                this.buff += chonk;
+
+                if (this.buff.endsWith('\n')) {
+                    let cmd: CommandOutput = JSON.parse(this.buff);
+
+                    if (this.expected_callback !== undefined) {
+                        this.buff = '';
+                        this.expected_callback(cmd);
+                    }
+                } else {
+                    console.log('not quite there...');
+                }
+            } catch (_) {
+                if (this.expected_callback !== undefined) {
+                    this.buff = '';
+                    this.expected_callback(undefined);
+                }
+            }
+        });
     }
 
     /**
@@ -185,8 +209,11 @@ export class YyBoss {
      */
     public writeCommand<T extends Command>(command: T): Promise<CommandToOutput<T>> {
         return new Promise((resolve, _) => {
-            this.yyBossHandle.stdout.once('data', (chonk: string) => {
-                let cmd: CommandOutput = JSON.parse(chonk);
+            this.expected_callback = cmd => {
+                if (cmd === undefined) {
+                    resolve();
+                    return;
+                }
 
                 if (cmd.success === false) {
                     this._error = (cmd as CommandOutputError).error;
@@ -194,7 +221,7 @@ export class YyBoss {
                 } else {
                     resolve(cmd as CommandToOutput<T>);
                 }
-            });
+            };
 
             let instruction = JSON.stringify(command) + '\n';
             this.yyBossHandle.stdin.write(instruction);
