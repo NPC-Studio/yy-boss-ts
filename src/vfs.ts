@@ -5,7 +5,7 @@ export const enum VfsCommandType {
     MoveFolder = 'MoveFolder',
     CreateFolder = 'CreateFolder',
     RemoveFolder = 'RemoveFolder',
-    // RenameFolder = 'RenameFolder',
+    RenameFolder = 'RenameFolder',
     GetFolder = 'GetFolder',
     GetFullVfs = 'GetFullVfs',
     GetPathType = 'GetPathType',
@@ -71,13 +71,13 @@ export class RemoveFolderVfs extends VfsCommand {
 }
 
 // This is effectively broken!
-// export class RenameFolderVfs extends VfsCommand {
-//     protected subCommand: VfsCommandType = VfsCommandType.RenameFolder;
+export class RenameFolderVfs extends VfsCommand {
+    protected subCommand: VfsCommandType = VfsCommandType.RenameFolder;
 
-//     constructor(private folder: string, private newName: string) {
-//         super();
-//     }
-// }
+    constructor(private folder: string, private newName: string) {
+        super();
+    }
+}
 
 export class GetFolderVfs extends VfsCommand {
     protected subCommand: VfsCommandType = VfsCommandType.GetFolder;
