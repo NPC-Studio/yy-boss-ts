@@ -5,12 +5,9 @@ import { CommandToOutput } from './input_to_output';
 import { CommandOutputError, YypBossError } from './error';
 import * as path from 'path';
 import { StartupOutputError } from './startup';
-import extract from 'extract-zip';
-import * as fs from 'fs-extra';
-import * as Axios from 'axios';
 import { stdout } from 'process';
+import { Fetch } from './fetch';
 
-const AXIOS = Axios.default;
 const CURRENT_VERSION = '0.4.8';
 
 abstract class Logging {
@@ -38,12 +35,6 @@ export const enum ClosureStatus {
     Open = 'Open',
     ExpectedShutdown = 'ExpectedShutdown',
     UnexpectedShutdown = 'UnexpectedShutdown',
-}
-
-export const enum YyBossDownloadStatus {
-    NoBoss,
-    IncorrectVersion,
-    Success,
 }
 
 class ShutdownCommand extends Command {
@@ -114,7 +105,7 @@ export class YyBoss {
         yypPath = path.resolve(yypPath);
         wd = path.resolve(wd);
 
-        if (this.getVersion(yyBossPath) !== CURRENT_VERSION) {
+        if (Fetch.exeIsCurrent(yyBossPath, Fetch.YY_BOSS_CURRENT_VERSION) === false) {
             return [
                 new StartupOutputError(`incorrect version of yy-boss exe given. we need ${CURRENT_VERSION}`),
                 undefined,
@@ -242,139 +233,5 @@ export class YyBoss {
      */
     public attachUnexpectedShutdownCallback(cback: () => Promise<void>) {
         this.onUnexpectedShutdown.push(cback);
-    }
-
-    /**
-     * Downloads a YyBoss from the Github release pages to a directory of a users choosing. This allows
-     * downstream crates to avoid packaging the server exe with them. Thanks to Sidorakh for contributing
-     * this work!
-     *
-     * @param bossDirectory The directory to download the YyBoss to. The filename will depend on the version
-     * of the boss.
-     * @param force If true, forces a download of a new YyBoss, even if the current boss is of the correct
-     * version number.
-     */
-    public static async fetchYyBoss(bossDirectory: string, force?: boolean | undefined): Promise<string> {
-        // Fetches a compatible release of YYBoss from Github
-        async function download(url: string, dest: string): Promise<void> {
-            const response = await AXIOS.get(url, { responseType: 'stream' });
-            const writer = fs.createWriteStream(dest);
-            response.data.pipe(writer);
-            return new Promise<undefined>((resolve, reject) => {
-                writer.on('finish', resolve);
-                writer.on('error', reject);
-            });
-        }
-
-        // resolve it to the full path...not really necessary, but good for debugging
-        bossDirectory = path.resolve(bossDirectory);
-        force = force === undefined ? false : force;
-
-        // make sure the directory is valid, so we can write and read below
-        await fs.ensureDir(bossDirectory);
-
-        let bosspath = undefined;
-        let update = false;
-
-        let bossurl = `https://github.com/NPC-Studio/yy-boss/releases/download/v${CURRENT_VERSION}/YyBoss`;
-
-        if (process.platform == 'win32') {
-            bosspath = path.join(bossDirectory, 'yy-boss-cli.exe');
-            bossurl = `${bossurl}.zip`;
-        } else if (process.platform == 'darwin') {
-            bosspath = path.join(bossDirectory, 'yy-boss-cli_darwin');
-            bossurl = `${bossurl}-Darwin.zip`;
-        } else {
-            throw 'Fetch does not have support for Linux!';
-        }
-
-        if (!fs.existsSync(bosspath)) {
-            console.log('We need to download');
-            update = true;
-        } else {
-            console.log('Check versions');
-            const output = this.getVersion(bosspath);
-            update = output !== CURRENT_VERSION;
-
-            if (update) {
-                console.log(`Version mismatch, have ${output}, require ${CURRENT_VERSION}`);
-            } else {
-                console.log(`Local version is current`);
-            }
-        }
-
-        // check for a forced update
-        if (force) {
-            console.log('Forced update by parameter');
-            update = true;
-        }
-
-        if (update) {
-            // file either doesn't exist, or we have the wrong version
-            const output_zip = path.join(bossDirectory, 'yy-boss-cli.zip');
-            console.log(`Updating from ${bossurl}`);
-
-            try {
-                await download(bossurl, output_zip);
-            } catch (e) {
-                throw `Update from GitHub releases failed! -- ${e}`;
-            }
-
-            await extract(output_zip, { dir: bossDirectory });
-            await fs.remove(output_zip);
-
-            // only unix will need the chmod but windows can have some chmod
-            // as a treat
-            await fs.chmod(bosspath, 0o777);
-
-            console.log('Updated succesfully');
-        }
-
-        return bosspath;
-    }
-
-    /**
-     * Checks if a YyBoss is at the given path, and if it is the correct version. This is basically
-     * the first half of `fetch`, and it should be merged together in some subroutine somehow.
-     *
-     * @param bossDirectory The directory to downlad the YyBoss to. The Filename will depend on the version
-     * of the boss.
-     */
-    public static async downloadStatus(bossDirectory: string): Promise<YyBossDownloadStatus> {
-        // resolve it to the full path...not really necessary, but good for debugging
-        bossDirectory = path.resolve(bossDirectory);
-
-        // make sure the directory is valid, so we can write and read below
-        await fs.ensureDir(bossDirectory);
-
-        let bosspath = undefined;
-
-        if (process.platform == 'win32') {
-            bosspath = path.join(bossDirectory, 'yy-boss-cli.exe');
-        } else if (process.platform == 'darwin') {
-            bosspath = path.join(bossDirectory, 'yy-boss-cli_darwin');
-        } else {
-            throw 'Fetch does not have support for Linux!';
-        }
-
-        if (!fs.existsSync(bosspath)) {
-            return YyBossDownloadStatus.NoBoss;
-        } else {
-            const output = this.getVersion(bosspath);
-            if (output !== CURRENT_VERSION) {
-                return YyBossDownloadStatus.IncorrectVersion;
-            } else {
-                return YyBossDownloadStatus.Success;
-            }
-        }
-    }
-
-    public static getVersion(yyBossPath: string): string | undefined {
-        try {
-            const yyBossVersionCheck = spawnSync(yyBossPath, ['-v']);
-            return yyBossVersionCheck.stdout.toString().replace(/[a-z-]*\s/g, '');
-        } catch (_) {
-            return undefined;
-        }
     }
 }
