@@ -66,21 +66,22 @@ export class Fetch {
         adamDirectory: string,
         cmp_operation?: (current_version: SemVer | undefined) => Promise<boolean> | boolean
     ): Promise<string> {
-        if (cmp_operation === undefined) {
-            cmp_operation = old_version => {
-                if (old_version === undefined) {
-                    return true;
-                }
+        const base_compare = (old_version: SemVer | undefined) => {
+            if (old_version === undefined) {
+                return true;
+            }
 
-                // if old version is smaller than current version, please download.
-                return old_version.compare(this.ADAM_CURRENT_VERSION) === -1;
-            };
+            // if old version is smaller than current version, please download.
+            return old_version.compare(this.ADAM_CURRENT_VERSION) === -1;
+        };
+        if (cmp_operation === undefined) {
+            cmp_operation = base_compare;
         }
         const base_url = `https://github.com/NPC-Studio/adam/releases/download/v${Fetch.ADAM_CURRENT_VERSION}/`;
 
         // check the PATH first...
         let current_version = Fetch.exeVersion('adam');
-        if (cmp_operation(current_version) == false) {
+        if (base_compare(current_version) == false) {
             return 'adam';
         } else {
             // now do the DOWNLOAD glory

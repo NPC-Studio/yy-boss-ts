@@ -1,5 +1,4 @@
 import { spawn, ChildProcessWithoutNullStreams, spawnSync } from 'child_process';
-import { assert } from 'console';
 import { Output, OutputType, Command, CommandOutput, CommandType } from './core';
 import { CommandToOutput } from './input_to_output';
 import { CommandOutputError, YypBossError } from './error';
@@ -96,8 +95,6 @@ export class YyBoss {
                         this.buff = '';
                         this.expected_callback(cmd);
                     }
-                } else {
-                    console.log('not quite there...');
                 }
             } catch (_) {
                 if (this.expected_callback !== undefined) {
@@ -163,7 +160,6 @@ export class YyBoss {
             yyBossHandle.stdout.once('data', (chonk: string) => {
                 // if we boof the command somehow, JSON.parse will throw
                 let output: Output = JSON.parse(chonk);
-                assert(output.type === OutputType.Startup);
 
                 // output
                 let yyp_boss = output.success ? new YyBoss(yyBossHandle) : undefined;
@@ -235,14 +231,13 @@ export class YyBoss {
      */
     public shutdown(): Promise<Output> {
         return new Promise((resolve, _) => {
-            this.yyBossHandle.stdout.once('data', (chonk: Buffer) => {
-                console.log('hello from the whatever');
-                let output: Output = JSON.parse(chonk.toString());
-                // commented out, this never returns control
-                // commented in, this returns control
-                // console.log('hello again friend');
-                resolve(output);
-            });
+            this.expected_callback = cmd => {
+                if (cmd === undefined) {
+                    resolve();
+                } else {
+                    resolve(cmd);
+                }
+            };
 
             this._closureStatus = ClosureStatus.ExpectedShutdown;
             const instruction = JSON.stringify(new ShutdownCommand()) + '\n';
