@@ -8,14 +8,8 @@ import * as tar from 'tar';
 
 const AXIOS = Axios.default;
 
-export const enum YyBossDownloadStatus {
-    NoBoss,
-    IncorrectVersion,
-    Success,
-}
-
 export class Fetch {
-    public static readonly YY_BOSS_CURRENT_VERSION = new SemVer('0.4.8');
+    public static readonly YY_BOSS_CURRENT_VERSION = new SemVer('0.5.0');
     public static readonly ADAM_CURRENT_VERSION = new SemVer('0.1.2');
 
     /**
