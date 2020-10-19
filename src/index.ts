@@ -17,6 +17,7 @@ import * as startupOutput from './startup';
 import * as vfsCommand from './vfs';
 import { YyBoss } from './yy_boss';
 import * as fetch from './fetch';
+import * as events from './events';
 
 export {
     // re-exports...
@@ -28,6 +29,7 @@ export {
     startupOutput,
     vfsCommand,
     fetch,
+    events,
     // simple re-exports...
     YyBoss,
     ViewPath,
