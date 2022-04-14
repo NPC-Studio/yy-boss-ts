@@ -27,7 +27,7 @@ export interface ProjectMetadata {
     rootFile: ViewPath;
 }
 
-export const enum Resource {
+export enum Resource {
     Sprite = 'Sprite',
     Script = 'Script',
     Object = 'Object',
@@ -44,7 +44,7 @@ export const enum Resource {
     Timeline = 'Timeline',
 }
 
-export const enum SerializedDataType {
+export enum SerializedDataType {
     Value = 'Value',
     Filepath = 'Filepath',
     DefaultValue = 'DefaultValue',
@@ -83,13 +83,13 @@ export abstract class Output {
     abstract success: boolean;
 }
 
-export const enum OutputType {
+export enum OutputType {
     Startup = 'Startup',
     Command = 'Command',
     Shutdown = 'Shutdown',
 }
 
-export const enum Item {
+export enum Item {
     Folder = 'Folder',
     Resource = 'Resource',
 }
